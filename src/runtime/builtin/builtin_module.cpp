@@ -12,6 +12,7 @@
 #include "builtin_module_file.h"
 #include "builtin_module_math.h"
 #include "builtin_module_random.h"
+#include "builtin_module_algorithm.h"
 
 using namespace peak;
 
@@ -35,4 +36,5 @@ BuiltinModule::BuiltinModule() {
 	_modules.emplace("file", BuiltModuleFile::CreateModule());
 	_modules.emplace("math", BuiltModuleMath::CreateModule());
 	_modules.emplace("random", BuiltModuleRandom::CreateModule());
+	_modules.emplace("algorithm", BuiltModuleAlgorithm::CreateModule());
 }

@@ -22,6 +22,18 @@ std::shared_ptr<Module> BuiltModuleArrays::CreateModule() {
         }
         return nullptr;
     });
+    _InsertFunction(space, "create", 2, [](const std::vector<std::shared_ptr<Value>>& args, std::shared_ptr<Space>) -> std::shared_ptr<Value> {
+        if (ValueTool::IsNumber(args[0].get())) {
+            auto arr = std::make_shared<ValueArray>();
+            auto size = static_cast<std::size_t>(std::static_pointer_cast<ValueNumber>(args[0])->GetValue());
+            arr->Reserve(size);
+            for (auto i = 0u; i < size; ++i) {
+                arr->EmplaceBack(args[1]);
+            }
+            return arr;
+        }
+        return nullptr;
+    });
     _InsertFunction(space, "append", 2, [](const std::vector<std::shared_ptr<Value>>& args, std::shared_ptr<Space>) -> std::shared_ptr<Value> {
         if (ValueTool::IsArray(args[0].get())) {
             auto ret = std::static_pointer_cast<ValueArray>(args[0]);

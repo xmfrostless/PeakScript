@@ -97,8 +97,20 @@ bool ValueTool::More(Value* a, Value* b) {
 		return static_cast<ValueNumber*>(a)->GetValue() >
 			static_cast<ValueNumber*>(b)->GetValue();
 	}
+	if (IsString(a)) {
+		return static_cast<ValueString*>(a)->GetValue() >
+			static_cast<ValueString*>(b)->GetValue();
+	}
 	return false;
 }
+
+bool ValueTool::CanMore(Value* a, Value* b) {
+	if (a->GetType() != b->GetType()) {
+		return false;
+	}
+	return IsNumber(a) || IsString(a);
+}
+
 
 bool ValueTool::IsInteger(Value* value) {
 	if (!IsNumber(value)) {

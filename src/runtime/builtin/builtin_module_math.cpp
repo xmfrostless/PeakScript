@@ -59,5 +59,37 @@ std::shared_ptr<Module> BuiltModuleMath::CreateModule() {
         return std::make_shared<ValueNumber>(std::clamp(v, a, b));
     });
 
+    _InsertFunction(space, "trunc", 1, [](const std::vector<std::shared_ptr<Value>>& args, std::shared_ptr<Space>) -> std::shared_ptr<Value> {
+        if (!ValueTool::IsNumber(args[0].get())) {
+            return nullptr;
+        }
+        const auto& num = std::static_pointer_cast<ValueNumber>(args[0])->GetValue();
+        return std::make_shared<ValueNumber>(std::trunc(num));
+    });
+
+    _InsertFunction(space, "floor", 1, [](const std::vector<std::shared_ptr<Value>>& args, std::shared_ptr<Space>) -> std::shared_ptr<Value> {
+        if (!ValueTool::IsNumber(args[0].get())) {
+            return nullptr;
+        }
+        const auto& num = std::static_pointer_cast<ValueNumber>(args[0])->GetValue();
+        return std::make_shared<ValueNumber>(std::floor(num));
+    });
+
+    _InsertFunction(space, "ceil", 1, [](const std::vector<std::shared_ptr<Value>>& args, std::shared_ptr<Space>) -> std::shared_ptr<Value> {
+        if (!ValueTool::IsNumber(args[0].get())) {
+            return nullptr;
+        }
+        const auto& num = std::static_pointer_cast<ValueNumber>(args[0])->GetValue();
+        return std::make_shared<ValueNumber>(std::ceil(num));
+    });
+
+    _InsertFunction(space, "round", 1, [](const std::vector<std::shared_ptr<Value>>& args, std::shared_ptr<Space>) -> std::shared_ptr<Value> {
+        if (!ValueTool::IsNumber(args[0].get())) {
+            return nullptr;
+        }
+        const auto& num = std::static_pointer_cast<ValueNumber>(args[0])->GetValue();
+        return std::make_shared<ValueNumber>(std::round(num));
+    });
+
     return std::make_shared<Module>(space);
 }

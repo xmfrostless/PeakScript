@@ -22,6 +22,7 @@
 #include <filesystem>
 #include <typeindex>
 #include <charconv>
+#include <cmath>
 
 namespace peak {
 

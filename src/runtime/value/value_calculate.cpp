@@ -54,15 +54,27 @@ std::shared_ptr<Value> ValueCalculateNotSame::Calculate(Value* left, Value* righ
 	return std::make_shared<ValueBool>(!ValueTool::Equal(left, right));
 }
 std::shared_ptr<Value> ValueCalculateMore::Calculate(Value* left, Value* right) const {
+	if (!ValueTool::CanMore(left, right)) {
+		return nullptr;
+	}
 	return std::make_shared<ValueBool>(ValueTool::More(left, right));
 }
 std::shared_ptr<Value> ValueCalculateSameOrMore::Calculate(Value* left, Value* right) const {
+	if (!ValueTool::CanMore(left, right)) {
+		return nullptr;
+	}
 	return std::make_shared<ValueBool>(ValueTool::More(left, right) || ValueTool::Equal(left, right));
 }
 std::shared_ptr<Value> ValueCalculateLess::Calculate(Value* left, Value* right) const {
+	if (!ValueTool::CanMore(left, right)) {
+		return nullptr;
+	}
 	return std::make_shared<ValueBool>(ValueTool::More(right, left));
 }
 std::shared_ptr<Value> ValueCalculateSameOrLess::Calculate(Value* left, Value* right) const {
+	if (!ValueTool::CanMore(left, right)) {
+		return nullptr;
+	}
 	return std::make_shared<ValueBool>(ValueTool::More(right, left) || ValueTool::Equal(right, left));
 }
 

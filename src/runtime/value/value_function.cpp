@@ -53,5 +53,8 @@ std::string ValueFunction::ToRawString() const {
 
 std::shared_ptr<Value> ValueFunction::Clone() const {
 	return std::make_unique<ValueFunction>(_params, _function);
+}
 
+std::size_t ValueFunction::GetParamSize() const {
+	return _params.size();
 }

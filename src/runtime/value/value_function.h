@@ -23,6 +23,8 @@ public:
 	virtual std::string ToRawString() const override;
 	virtual std::shared_ptr<Value> Clone() const override;
 
+	std::size_t GetParamSize() const;
+
 private:
 	ValueFunction() = default;
 

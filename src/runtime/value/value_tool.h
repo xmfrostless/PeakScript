@@ -32,6 +32,7 @@ public:
 	static bool ToLogic(Value* value);
 	static bool Equal(Value* a, Value* b);
 	static bool More(Value* a, Value* b);
+	static bool CanMore(Value* a, Value* b);
 
 	static bool IsInteger(Value* value);
 };
