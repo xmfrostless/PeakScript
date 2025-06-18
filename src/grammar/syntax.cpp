@@ -583,76 +583,59 @@ bool Syntax::MatchPair(const std::string& signLeft, const std::string& signRight
 			*nextPos = pos;
 			return true;
 		}
+		if (src[pos] == '\\') {
+			++pos;
+		}
 		++pos;
 	}
 	return false;
 }
-bool Syntax::MatchPair(char signLeft, char signRight, const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos, std::string* result) {
-	if (src[pos] != signLeft) {
-		return false;
-	}
-	++pos;
-	bool bSame = signLeft == signRight;
-	int count = 0;
-	bool change = false;
-	std::vector<char> buffers;
-	bool isString = IsGrammarStringSign(signLeft);
 
-	while (pos < size) {
-		char ch = src[pos];
-		do {
-			if (isString && change) {
-				if (ch == '\\') {
-					buffers.emplace_back('\\');
-				} else if (ch == 'n') {
-					buffers.emplace_back('\n');
-				} else if (ch == 't') {
-					buffers.emplace_back('\t');
-				} else if (ch == 'b') {
-					if (!buffers.empty()) {
-						buffers.pop_back();
+bool Syntax::MatchPair(char signLeft, char signRight, const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos, std::string* result) {
+	return MatchPair(std::string() + signLeft, std::string() + signRight, src, size, pos, nextPos, result);
+}
+
+bool Syntax::MatchString(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos, std::string* result) {
+	for (auto sign : SIGN_STRING) {
+		std::string str;
+		if (MatchPair(sign, sign, src, size, pos, nextPos, &str)) {
+			std::vector<char> buffers;
+			buffers.reserve(str.size());
+			bool change = false;
+			for (char ch : str) {
+				if (!change && ch == '\\') {
+					change = true;
+					continue;
+				}
+
+				if (change) {
+					if (ch == '\\') {
+						buffers.emplace_back('\\');
+					} else if (ch == 'n') {
+						buffers.emplace_back('\n');
+					} else if (ch == 't') {
+						buffers.emplace_back('\t');
+					} else if (ch == 'b') {
+						if (!buffers.empty()) {
+							buffers.pop_back();
+						}
+					} else if (ch == 'r') {
+						buffers.emplace_back('\r');
+					} else if (ch == '"') {
+						buffers.emplace_back('\"');
+					} else if (ch == '\'') {
+						buffers.emplace_back('\'');
+					} else {
+						buffers.emplace_back(ch);
 					}
-				} else if (ch == 'r') {
-					buffers.emplace_back('\r');
-				} else if (ch == '"') {
-					buffers.emplace_back('\"');
-				} else if (ch == '\'') {
-					buffers.emplace_back('\'');
+					change = false;
 				} else {
 					buffers.emplace_back(ch);
 				}
-				break;
 			}
-
-			if (!bSame && (ch == signLeft)) {
-				++count;
-				break;
-			}
-			if (ch == signRight) {
-				if (count > 0) {
-					--count;
-					break;
-				}
-				*result = std::string(buffers.begin(), buffers.end());
-				*nextPos = pos + 1;
-				return true;
-			}
-		} while (false);
-
-		if (isString) {
-			if (change) {
-				change = false;
-			} else {
-				change = ch == '\\';
-				if (!change) {
-					buffers.emplace_back(ch);
-				}
-			}
-		} else {
-			buffers.emplace_back(ch);
+			result->assign(buffers.begin(), buffers.end());
+			return true;
 		}
-
-		++pos;
 	}
 	return false;
 }

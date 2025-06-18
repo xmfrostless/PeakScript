@@ -108,6 +108,7 @@ public:
 	static bool MatchSign(char sign, const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos);
 	static bool MatchPair(const std::string& signLeft, const std::string& signRight, const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos, std::string* result);
 	static bool MatchPair(char signLeft, char signRight, const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos, std::string* result);
+	static bool MatchString(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos, std::string* result);
 
 public:
 };

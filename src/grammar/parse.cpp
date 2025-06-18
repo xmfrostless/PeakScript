@@ -284,12 +284,8 @@ std::shared_ptr<Sentence> Parse::_ParseImport(const std::string& src, std::size_
 	if (pos >= size) {
 		return nullptr;
 	}
-	char sign = src[pos];
-	if (!Syntax::IsGrammarStringSign(sign)) {
-		return nullptr;
-	}
 	std::string moduleName;
-	if (!Syntax::MatchPair(sign, sign, src, size, pos, &pos, &moduleName)) {
+	if (!Syntax::MatchString(src, size, pos, &pos, &moduleName)) {
 		return nullptr;
 	}
 
@@ -958,12 +954,8 @@ std::shared_ptr<Sentence> Parse::_ParseLoopControl(const std::string& src, std::
 }
 
 std::shared_ptr<SentenceExpression> Parse::_ParseString(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
-	char sign = src[pos];
-	if (!Syntax::IsGrammarStringSign(sign)) {
-		return nullptr;
-	}
 	std::string temp;
-	if (Syntax::MatchPair(sign, sign, src, size, pos, &pos, &temp)) {
+	if (Syntax::MatchString(src, size, pos, &pos, &temp)) {
 		*nextPos = pos;
 		return std::make_shared<SentenceExpression>(std::make_shared<ValueString>(temp));
 	}
