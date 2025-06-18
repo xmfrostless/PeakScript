@@ -1,0 +1,116 @@
+import "arrays" as arrays;
+import "time" as time;
+import "math" as math;
+import "algorithm" as algorithm;
+
+// insertion
+function insertion_sort(nums) {
+    var n = arrays.len(nums);
+    for (var i=1; i<n; ++i) {
+        for (var j=i; j>0; --j) {
+            var key = nums[j];
+            if (key < nums[j - 1]) {
+                nums[j] = nums[j - 1];
+                nums[j - 1] = key;
+            }
+        }
+    }
+}
+
+// merge_sort
+function merge(nums, start, mid, size, buffers) {
+    var i = start;
+    var j = mid;
+    var k = 0;
+
+    while (i < mid && j < size) {
+        if (nums[i] < nums[j]) {
+            buffers[k++] = nums[i++];
+        } else {
+            buffers[k++] = nums[j++];
+        }
+    }
+
+    while (i < mid) {
+        buffers[k++] = nums[i++];
+    }
+    while (j < size) {
+        buffers[k++] = nums[j++];
+    }
+
+    var n = arrays.len(buffers);
+    k = 0;
+    while (start < size) {
+        nums[start++] = buffers[k++];
+    }
+}
+
+function merge_sort_recv(nums, start, size, buffers) {
+    if (start >= size - 1) {
+        return;
+    }
+    var mid = start + math.trunc((size - start) / 2);
+    merge_sort_recv(nums, start, mid, buffers);
+    merge_sort_recv(nums, mid, size, buffers);
+    merge(nums, start, mid, size, buffers);
+}
+
+function merge_sort(nums) {
+    var n = arrays.len(nums);
+    var buffers = arrays.create(n, 0);
+    merge_sort_recv(nums, 0, n, buffers);
+}
+
+// builtin_merge_sort
+function merge_sort_builtin(nums) {
+    function comp(a, b) {
+        return a < b;
+    }
+    algorithm.merge_sort(nums, comp);
+}
+
+// test
+function sort_test(nums, name, sort_func, show_nums) {
+    echo name + ":";
+    if (show_nums) {
+        echo "> input:";
+        echo nums;
+    }
+    
+    var tick = time.get_tick();
+    sort_func(nums);
+    var t = (time.get_tick() - tick) * 0.001 + " ms";
+
+    var n = arrays.len(nums);
+    var ok = true;
+    loop (i in n) {
+        if (nums[i] != i) {
+            ok = false;
+            break;
+        }
+    }
+
+    if (show_nums) {
+        echo "> output:";
+        echo nums;
+    }
+
+    echo "> verify: " + ok;
+    echo "> time: " + t;
+    echo "";
+}
+
+function get_nums(size) {
+    var nums = [];
+    loop (i in size) {
+        arrays.append(nums, size - i - 1);
+    }
+    return nums;
+}
+
+const show_nums = true;
+const nums_size = 50;
+
+sort_test(get_nums(nums_size), "insertion_sort", insertion_sort, show_nums);
+sort_test(get_nums(nums_size), "merge_sort", merge_sort, show_nums);
+sort_test(get_nums(nums_size), "merge_sort_builtin", merge_sort_builtin, show_nums);
