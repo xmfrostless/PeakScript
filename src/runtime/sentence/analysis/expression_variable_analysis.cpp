@@ -30,36 +30,57 @@ std::shared_ptr<Variable> ExpressionVariableAnalysisArrayItem::Execute(std::shar
 		return nullptr;
 	}
 	auto retValue = _valueExpression->GetValue();
-	std::shared_ptr<Variable> retVariable{nullptr};
+	std::shared_ptr<Variable> retVariable { nullptr };
 
 	auto expressionVecSize = _indexExpressionVec.size();
 	for (auto i = 0u; i < expressionVecSize; ++i) {
-		if (!ValueTool::IsArray(retValue.get())) {
-			ErrorLogger::LogRuntimeError(ErrorRuntimeCode::VariableArrayItemAnalysis, "The result of expression isn't a array!");
+		if (ValueTool::IsArray(retValue.get())) {
+			auto& arr = std::static_pointer_cast<ValueArray>(retValue)->GetArray();
+			auto expression = _indexExpressionVec[i];
+			if (!Sentence::IsSuccess(expression->Execute(space))) {
+				ErrorLogger::LogRuntimeError(ErrorRuntimeCode::VariableArrayItemAnalysis, "The expression execute failed!");
+				return nullptr;
+			}
+			auto indexValue = expression->GetValue();
+			if (!ValueTool::IsInteger(indexValue.get())) {
+				ErrorLogger::LogRuntimeError(ErrorRuntimeCode::VariableArrayItemAnalysis, "The index isn't a integer value!");
+				return nullptr;
+			}
+			auto index = static_cast<std::size_t>(std::static_pointer_cast<ValueNumber>(indexValue)->GetValue());
+			if (index >= arr.size()) {
+				ErrorLogger::LogRuntimeError(ErrorRuntimeCode::VariableArrayItemAnalysis, "The index out of range!");
+				return nullptr;
+			}
+			retVariable = arr[index];
+			if (!retVariable) {
+				ErrorLogger::LogRuntimeError(ErrorRuntimeCode::VariableArrayItemAnalysis, "The array value is invalid!");
+				return nullptr;
+			}
+			retValue = retVariable->GetValue();
+		} else if (ValueTool::IsString(retValue.get())) {
+			auto& str = std::static_pointer_cast<ValueString>(retValue)->GetValue();
+			auto expression = _indexExpressionVec[i];
+			if (!Sentence::IsSuccess(expression->Execute(space))) {
+				ErrorLogger::LogRuntimeError(ErrorRuntimeCode::VariableArrayItemAnalysis, "The expression execute failed!");
+				return nullptr;
+			}
+			auto indexValue = expression->GetValue();
+			if (!ValueTool::IsInteger(indexValue.get())) {
+				ErrorLogger::LogRuntimeError(ErrorRuntimeCode::VariableArrayItemAnalysis, "The index isn't a integer value!");
+				return nullptr;
+			}
+			auto index = static_cast<std::size_t>(std::static_pointer_cast<ValueNumber>(indexValue)->GetValue());
+			if (index >= str.size()) {
+				ErrorLogger::LogRuntimeError(ErrorRuntimeCode::VariableArrayItemAnalysis, "The index out of range!");
+				return nullptr;
+			}
+			retVariable = std::make_shared<Variable>("", VariableAttribute::None);
+			retValue = std::make_shared<ValueString>(std::string() + str[index]);
+			retVariable->SetValue(retValue);
+		} else {
+			ErrorLogger::LogRuntimeError(ErrorRuntimeCode::VariableArrayItemAnalysis, "The result of expression isn't a array or string!");
 			return nullptr;
 		}
-		auto& arr = std::static_pointer_cast<ValueArray>(retValue)->GetArray();
-		auto expression = _indexExpressionVec[i];
-		if (!Sentence::IsSuccess(expression->Execute(space))) {
-			ErrorLogger::LogRuntimeError(ErrorRuntimeCode::VariableArrayItemAnalysis, "The expression execute failed!");
-			return nullptr;
-		}
-		auto indexValue = expression->GetValue();
-		if (!ValueTool::IsInteger(indexValue.get())) {
-			ErrorLogger::LogRuntimeError(ErrorRuntimeCode::VariableArrayItemAnalysis, "The index isn't a integer value!");
-			return nullptr;
-		}
-		auto index = static_cast<std::size_t>(std::static_pointer_cast<ValueNumber>(indexValue)->GetValue());
-		if (index >= arr.size()) {
-			ErrorLogger::LogRuntimeError(ErrorRuntimeCode::VariableArrayItemAnalysis, "The index out of range!");
-			return nullptr;
-		}
-		retVariable = arr[index];
-		if (!retVariable) {
-			ErrorLogger::LogRuntimeError(ErrorRuntimeCode::VariableArrayItemAnalysis, "The array value is invalid!");
-			return nullptr;
-		}
-		retValue = retVariable->GetValue();
 	}
 
 	return retVariable;
@@ -79,7 +100,7 @@ std::shared_ptr<Variable> ExpressionVariableAnalysisInside::Execute(std::shared_
 		return nullptr;
 	}
 	auto tempValue = headerValue;
-	std::shared_ptr<Variable> retVariable{nullptr};
+	std::shared_ptr<Variable> retVariable { nullptr };
 	for (auto expression : _insides) {
 		if (!ValueTool::IsObject(tempValue.get())) {
 			ErrorLogger::LogRuntimeError(ErrorRuntimeCode::VariableInsideAnalysis, "The expression isn't a object!");

@@ -1,27 +1,17 @@
 #include "syntax.h"
 #include <unordered_set>
 #include <unordered_map>
+#include <vector>
 
 using namespace peak;
 
-// text
-static const std::unordered_set<char> SET_TEXT_SPACE = { ' ', '\n', '\r', '\t' };
-static const std::unordered_set<char> SET_TEXT_NEW_LINE = { '\n', '\r' };
-
-// grammar
-static const std::unordered_set<char> SET_STRING_SIGN = { '\"', '\'', '`' };
-static const std::unordered_set<char> SET_END_SIGN = { ';' };
-static const std::unordered_set<std::string> SET_VARIABLE_DEFINE_SIGN = { "var" };
-static const std::unordered_set<std::string> SET_ASSIGN_SIGN = { "=" };
-static const std::unordered_set<std::string> SET_BOOL_TRUE_SIGN = { "true" };
-static const std::unordered_set<std::string> SET_BOOL_FALSE_SIGN = { "false" };
-static const std::unordered_set<std::string> SET_CONDITION_IF_SIGN = { "if" };
-static const std::unordered_set<std::string> SET_CONDITION_ELSE_SIGN = { "else" };
-static const std::unordered_set<std::string> SET_BLOCK_BEGIN = { "{", "begin" };
-static const std::unordered_set<std::string> SET_BLOCK_END = { "}", "end" };
-static const std::unordered_set<std::string> SET_COMMENT_SIGN = { "//", "#" };
-static const std::unordered_set<std::string> SET_EXTENDS_SIGN = { ":", "extends" };
-static const std::unordered_map<MathSymbol, std::pair<int, std::unordered_set<std::string>>> MAP_SET_MATH_SYMBOL = {
+// syntax
+static const std::unordered_set<char> SIGN_SET_TEXT_SPACE = { ' ', '\n', '\r', '\t' };
+static const std::unordered_set<char> SIGN_SET_TEXT_NEW_LINE = { '\n', '\r' };
+static const std::unordered_set<char> SIGN_STRING = { '\"', '\'', '`' };
+static const std::vector<std::string> SIGN_COMMENT = { "//", "#" };
+static const std::vector<std::string> SIGN_EXTENDS = { ":", "extends" };
+static const std::unordered_map<MathSymbol, std::pair<int, std::vector<std::string>>> SIGN_MAP_MATH_SYMBOL = {
 	{MathSymbol::AssignMul, {110, {"*="}}},
 	{MathSymbol::AssignDiv, {110, {"/="}}},
 	{MathSymbol::AssignMod, {110, {"%="}}},
@@ -41,49 +31,59 @@ static const std::unordered_map<MathSymbol, std::pair<int, std::unordered_set<st
 	{MathSymbol::LogicAnd, {60, {"&&", "and"}}},
 	{MathSymbol::LogicOr, {60, {"||", "or"}}},
 };
-static const std::unordered_map<DoubleSymbol, std::string> MAP_DOUBLE_SYMBOL = {
+static const std::unordered_map<DoubleSymbol, std::string> SIGN_DOUBLE_SYMBOL = {
 	{DoubleSymbol::AddAdd, "++"},
 	{DoubleSymbol::SubSub, "--"},
 };
-static const std::string STRING_COMMENT_BLOCK_BEGIN_SIGN = "/*";
-static const std::string STRING_COMMENT_BLOCK_END_SIGN = "*/";
+static const std::string SIGN_COMMENT_BLOCK_BEGIN = "/*";
+static const std::string SIGN_COMMENT_BLOCK_END = "*/";
 
-static const std::string STRING_NULL_SIGN = "null";
-static const std::string STRING_ECHO_SIGN = "echo";
-static const std::string STRING_FOR_SIGN = "for";
-static const std::string STRING_FOREACH_SIGN = "foreach";
-static const std::string STRING_FOREACH_IN_SIGN = "in";
-static const std::string STRING_WHILE_SIGN = "while";
-static const std::string STRING_DO_SIGN = "do";
-static const std::string STRING_LOOP_SIGN = "loop";
-static const std::string STRING_TRY_SIGN = "try";
-static const std::string STRING_CATCH_SIGN = "catch";
-static const std::string STRING_FINALLY_SIGN = "finally";
-static const std::string STRING_BREAK_SIGN = "break";
-static const std::string STRING_CONTINUE_SIGN = "continue";
-static const std::string STRING_FUNCTION_SIGN = "function";
-static const std::string STRING_RETURN_SIGN = "return";
-static const std::string STRING_SET_SIGN = "set";
-static const std::string STRING_CONST_SIGN = "const";
-static const std::string STRING_NEW_SIGN = "new";
-static const std::string STRING_OBJECT_SIGN = "object";
-static const std::string STRING_ENUM_SIGN = "enum";
-static const std::string STRING_IMPORT_SIGN = "import";
-static const std::string STRING_IMPORT_AS_SIGN = "as";
+static const std::string SIGN_VARIABLE_DEFINE = "var";
+static const std::string SIGN_CONST = "const";
 
-static const char CHAR_NOT_SYMBOL = '!';
-static const char CHAR_LEFT_BRACKET = '(';
-static const char CHAR_RIGHT_BRACKET = ')';
-static const char CHAR_SPLIT_SYMBOL = ',';
-static const char CHAR_ARRAY_BEGIN = '[';
-static const char CHAR_ARRAY_END = ']';
-static const char CHAR_INSIDE_SYMBOL = '.';
+static const std::string SIGN_BOOL_TRUE = "true";
+static const std::string SIGN_BOOL_FALSE = "false";
+static const std::string SIGN_CONDITION_IF = "if";
+static const std::string SIGN_CONDITION_ELSE = "else";
+
+static const std::vector<std::string> SIGN_FOR_IN = { "in", ":" };
+static const std::string SIGN_NULL = "null";
+static const std::string SIGN_ECHO = "echo";
+static const std::string SIGN_FOR = "for";
+static const std::string SIGN_WHILE = "while";
+static const std::string SIGN_DO = "do";
+static const std::string SIGN_LOOP = "loop";
+static const std::string SIGN_TRY = "try";
+static const std::string SIGN_CATCH = "catch";
+static const std::string SIGN_FINALLY = "finally";
+static const std::string SIGN_BREAK = "break";
+static const std::string SIGN_CONTINUE = "continue";
+static const std::string SIGN_FUNCTION = "function";
+static const std::string SIGN_RETURN = "return";
+static const std::string SIGN_SET = "set";
+static const std::string SIGN_NEW = "new";
+static const std::string SIGN_OBJECT = "object";
+static const std::string SIGN_ENUM = "enum";
+static const std::string SIGN_IMPORT = "import";
+static const std::string SIGN_IMPORT_AS = "as";
+
+static const char SIGN_NOT_SYMBOL = '!';
+static const char SIGN_LEFT_BRACKET = '(';
+static const char SIGN_RIGHT_BRACKET = ')';
+static const char SIGN_SPLIT_SYMBOL = ',';
+static const char SIGN_ARRAY_BEGIN = '[';
+static const char SIGN_ARRAY_END = ']';
+static const char SIGN_INSIDE_SYMBOL = '.';
+static const char SIGN_END = ';';
+static const char SIGN_ASSIGN = '=';
+static const char SIGN_BLOCK_BEGIN = '{';
+static const char SIGN_BLOCK_END = '}';
 
 bool Syntax::IsTextSpace(char ch) {
-	return (SET_TEXT_SPACE.find(ch) != SET_TEXT_SPACE.end());
+	return (SIGN_SET_TEXT_SPACE.find(ch) != SIGN_SET_TEXT_SPACE.end());
 }
 bool Syntax::IsTextNewLine(char ch) {
-	return (SET_TEXT_NEW_LINE.find(ch) != SET_TEXT_NEW_LINE.end());
+	return (SIGN_SET_TEXT_NEW_LINE.find(ch) != SIGN_SET_TEXT_NEW_LINE.end());
 }
 bool Syntax::IsTextSpecialChar(char ch) {
 	return (ch >= 0 && ch <= 47) || (ch >= 58 && ch <= 64) || (ch >= 91 && ch <= 94) || (ch == 96) || (ch >= 123 && ch <= 127);
@@ -92,11 +92,11 @@ bool Syntax::IsTextNumber(char ch) {
 	return ch >= '0' && ch <= '9';
 }
 bool Syntax::IsGrammarStringSign(char ch) {
-	return (SET_STRING_SIGN.find(ch) != SET_STRING_SIGN.end());
+	return (SIGN_STRING.find(ch) != SIGN_STRING.end());
 }
 
 bool Syntax::IsGrammarEndSign(char ch) {
-	return (SET_END_SIGN.find(ch) != SET_END_SIGN.end());
+	return SIGN_END == ch;
 }
 
 bool Syntax::IsSpecialSign(const std::string& value) {
@@ -114,9 +114,6 @@ bool Syntax::IsSpecialSign(const std::string& value) {
 			break;
 		}
 		if (MatchEcho(value, size, 0, &pos)) {
-			break;
-		}
-		if (MatchForeach(value, size, 0, &pos)) {
 			break;
 		}
 		if (MatchFor(value, size, 0, &pos)) {
@@ -185,18 +182,18 @@ bool Syntax::IsSpecialSign(const std::string& value) {
 	return pos >= size || IsTextSpecialChar(value[pos]);
 }
 int Syntax::GetMathSymbolLevel(MathSymbol value) {
-	auto ite = MAP_SET_MATH_SYMBOL.find(value);
-	if (ite != MAP_SET_MATH_SYMBOL.end()) {
+	auto ite = SIGN_MAP_MATH_SYMBOL.find(value);
+	if (ite != SIGN_MAP_MATH_SYMBOL.end()) {
 		return ite->second.first;
 	}
 	return 0;
 }
 
 bool Syntax::IsLeftBrcket(char ch) {
-	return ch == CHAR_LEFT_BRACKET;
+	return ch == SIGN_LEFT_BRACKET;
 }
 bool Syntax::IsRightBrcket(char ch) {
-	return ch == CHAR_RIGHT_BRACKET;
+	return ch == SIGN_RIGHT_BRACKET;
 }
 
 bool Syntax::IsVariableSelfAssignSymbol(MathSymbol value) {
@@ -214,12 +211,12 @@ bool Syntax::IsWordValidSymbol(char ch) {
 		return true;
 	}
 	return IsTextSpace(ch) ||
-		(ch == CHAR_LEFT_BRACKET) ||
-		(ch == CHAR_RIGHT_BRACKET) ||
-		(ch == CHAR_SPLIT_SYMBOL) ||
-		(ch == CHAR_ARRAY_BEGIN) ||
-		(ch == CHAR_ARRAY_END) ||
-		(ch == CHAR_INSIDE_SYMBOL);
+		(ch == SIGN_LEFT_BRACKET) ||
+		(ch == SIGN_RIGHT_BRACKET) ||
+		(ch == SIGN_SPLIT_SYMBOL) ||
+		(ch == SIGN_ARRAY_BEGIN) ||
+		(ch == SIGN_ARRAY_END) ||
+		(ch == SIGN_INSIDE_SYMBOL);
 }
 
 bool Syntax::SearchNextInside(const std::string& src, std::size_t size, std::size_t pos) {
@@ -255,27 +252,27 @@ bool Syntax::SearchNextArray(const std::string& src, std::size_t size, std::size
 }
 
 bool Syntax::MatchImport(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
-	return MatchSign(STRING_IMPORT_SIGN, src, size, pos, nextPos);
+	return MatchSign(SIGN_IMPORT, src, size, pos, nextPos);
 }
 bool Syntax::MatchImportAs(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
-	return MatchSign(STRING_IMPORT_AS_SIGN, src, size, pos, nextPos);
+	return MatchSign(SIGN_IMPORT_AS, src, size, pos, nextPos);
 }
 
 bool Syntax::MatchEnum(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
-	return MatchSign(STRING_ENUM_SIGN, src, size, pos, nextPos);
+	return MatchSign(SIGN_ENUM, src, size, pos, nextPos);
 }
 bool Syntax::MatchExtends(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
-	return MatchSignSet(SET_EXTENDS_SIGN, src, size, pos, nextPos);
+	return MatchSign(SIGN_EXTENDS, src, size, pos, nextPos);
 }
 bool Syntax::MatchObject(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
-	return MatchSign(STRING_OBJECT_SIGN, src, size, pos, nextPos);
+	return MatchSign(SIGN_OBJECT, src, size, pos, nextPos);
 }
 bool Syntax::MatchInsideSymbol(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
-	return MatchSign(CHAR_INSIDE_SYMBOL, src, size, pos, nextPos);
+	return MatchSign(SIGN_INSIDE_SYMBOL, src, size, pos, nextPos);
 }
 
 bool Syntax::MatchNew(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
-	return MatchSign(STRING_NEW_SIGN, src, size, pos, nextPos);
+	return MatchSign(SIGN_NEW, src, size, pos, nextPos);
 }
 bool Syntax::MatchObjectBegin(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
 	return MatchBlockBegin(src, size, pos, nextPos);
@@ -284,15 +281,15 @@ bool Syntax::MatchObjectEnd(const std::string& src, std::size_t size, std::size_
 	return MatchBlockEnd(src, size, pos, nextPos);
 }
 bool Syntax::MatchArrayBegin(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
-	return MatchSign(CHAR_ARRAY_BEGIN, src, size, pos, nextPos);
+	return MatchSign(SIGN_ARRAY_BEGIN, src, size, pos, nextPos);
 }
 bool Syntax::MatchArrayEnd(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
-	return MatchSign(CHAR_ARRAY_END, src, size, pos, nextPos);
+	return MatchSign(SIGN_ARRAY_END, src, size, pos, nextPos);
 }
 bool Syntax::MatchDoubleSymbol(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos, DoubleSymbol* symbol) {
 	std::size_t signSize = 0;
 	std::size_t tmpNextPos;
-	for (auto& pair : MAP_DOUBLE_SYMBOL) {
+	for (auto& pair : SIGN_DOUBLE_SYMBOL) {
 		if (pair.second.size() <= signSize) {
 			continue;
 		}
@@ -305,78 +302,75 @@ bool Syntax::MatchDoubleSymbol(const std::string& src, std::size_t size, std::si
 	return signSize > 0;
 }
 bool Syntax::MatchNotSymbol(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
-	return MatchSign(CHAR_NOT_SYMBOL, src, size, pos, nextPos);
+	return MatchSign(SIGN_NOT_SYMBOL, src, size, pos, nextPos);
 }
 bool Syntax::MatchConst(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
-	return MatchSign(STRING_CONST_SIGN, src, size, pos, nextPos);
+	return MatchSign(SIGN_CONST, src, size, pos, nextPos);
 }
 bool Syntax::MatchReturn(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
-	return MatchSign(STRING_RETURN_SIGN, src, size, pos, nextPos);
+	return MatchSign(SIGN_RETURN, src, size, pos, nextPos);
 }
 bool Syntax::MatchSplitSymbol(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
-	return MatchSign(CHAR_SPLIT_SYMBOL, src, size, pos, nextPos);
+	return MatchSign(SIGN_SPLIT_SYMBOL, src, size, pos, nextPos);
 }
 bool Syntax::MatchFunction(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
-	return MatchSign(STRING_FUNCTION_SIGN, src, size, pos, nextPos);
+	return MatchSign(SIGN_FUNCTION, src, size, pos, nextPos);
 }
 bool Syntax::MatchBreak(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
-	return MatchSign(STRING_BREAK_SIGN, src, size, pos, nextPos);
+	return MatchSign(SIGN_BREAK, src, size, pos, nextPos);
 }
 bool Syntax::MatchContinue(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
-	return MatchSign(STRING_CONTINUE_SIGN, src, size, pos, nextPos);
+	return MatchSign(SIGN_CONTINUE, src, size, pos, nextPos);
 }
 bool Syntax::MatchTry(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
-	return MatchSign(STRING_TRY_SIGN, src, size, pos, nextPos);
+	return MatchSign(SIGN_TRY, src, size, pos, nextPos);
 }
 bool Syntax::MatchCatch(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
-	return MatchSign(STRING_CATCH_SIGN, src, size, pos, nextPos);
+	return MatchSign(SIGN_CATCH, src, size, pos, nextPos);
 }
 bool Syntax::MatchFinally(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
-	return MatchSign(STRING_FINALLY_SIGN, src, size, pos, nextPos);
+	return MatchSign(SIGN_FINALLY, src, size, pos, nextPos);
 }
 bool Syntax::MatchEcho(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
-	return MatchSign(STRING_ECHO_SIGN, src, size, pos, nextPos);
+	return MatchSign(SIGN_ECHO, src, size, pos, nextPos);
 }
 bool Syntax::MatchBlockBegin(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
-	return MatchSignSet(SET_BLOCK_BEGIN, src, size, pos, nextPos);
+	return MatchSign(SIGN_BLOCK_BEGIN, src, size, pos, nextPos);
 }
 bool Syntax::MatchBlockEnd(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
-	return MatchSignSet(SET_BLOCK_END, src, size, pos, nextPos);
+	return MatchSign(SIGN_BLOCK_END, src, size, pos, nextPos);
 }
 bool Syntax::MatchConditionIf(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
-	return MatchSignSet(SET_CONDITION_IF_SIGN, src, size, pos, nextPos);
+	return MatchSign(SIGN_CONDITION_IF, src, size, pos, nextPos);
 }
 bool Syntax::MatchConditionElse(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
-	return MatchSignSet(SET_CONDITION_ELSE_SIGN, src, size, pos, nextPos);
+	return MatchSign(SIGN_CONDITION_ELSE, src, size, pos, nextPos);
 }
 bool Syntax::MatchFor(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
-	return MatchSign(STRING_FOR_SIGN, src, size, pos, nextPos);
+	return MatchSign(SIGN_FOR, src, size, pos, nextPos);
 }
-bool Syntax::MatchForeach(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
-	return MatchSign(STRING_FOREACH_SIGN, src, size, pos, nextPos);
-}
-bool Syntax::MatchForeachIn(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
-	return MatchSign(STRING_FOREACH_IN_SIGN, src, size, pos, nextPos);
+bool Syntax::MatchForIn(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
+	return MatchSign(SIGN_FOR_IN, src, size, pos, nextPos);
 }
 bool Syntax::MatchWhile(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
-	return MatchSign(STRING_WHILE_SIGN, src, size, pos, nextPos);
+	return MatchSign(SIGN_WHILE, src, size, pos, nextPos);
 }
 bool Syntax::MatchDo(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
-	return MatchSign(STRING_DO_SIGN, src, size, pos, nextPos);
+	return MatchSign(SIGN_DO, src, size, pos, nextPos);
 }
 bool Syntax::MatchLoop(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
-	return MatchSign(STRING_LOOP_SIGN, src, size, pos, nextPos);
+	return MatchSign(SIGN_LOOP, src, size, pos, nextPos);
 }
 bool Syntax::MatchLeftBrcket(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
-	return MatchSign(CHAR_LEFT_BRACKET, src, size, pos, nextPos);
+	return MatchSign(SIGN_LEFT_BRACKET, src, size, pos, nextPos);
 }
 bool Syntax::MatchRightBrcket(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
-	return MatchSign(CHAR_RIGHT_BRACKET, src, size, pos, nextPos);
+	return MatchSign(SIGN_RIGHT_BRACKET, src, size, pos, nextPos);
 }
 bool Syntax::MatchMathSymbol(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos, MathSymbol* symbol) {
 	std::size_t signSize = 0;
 	std::size_t tmpNextPos;
-	for (auto& pair : MAP_SET_MATH_SYMBOL) {
+	for (auto& pair : SIGN_MAP_MATH_SYMBOL) {
 		const auto& setPair = pair.second;
 		const auto& signSet = setPair.second;
 		for (auto& sign : signSet) {
@@ -394,33 +388,19 @@ bool Syntax::MatchMathSymbol(const std::string& src, std::size_t size, std::size
 }
 
 bool Syntax::MatchNull(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
-	return MatchSign(STRING_NULL_SIGN, src, size, pos, nextPos);
+	return MatchSign(SIGN_NULL, src, size, pos, nextPos);
 }
 
 bool Syntax::MatchBool(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos, bool* value) {
-	std::size_t signSize = 0;
-	std::size_t tmpNextPos;
-	for (const auto& sign : SET_BOOL_TRUE_SIGN) {
-		if (sign.size() <= signSize) {
-			continue;
-		}
-		if (MatchSign(sign, src, size, pos, &tmpNextPos)) {
-			signSize = sign.size();
-			*nextPos = tmpNextPos;
-			*value = true;
-		}
+	if (MatchSign(SIGN_BOOL_TRUE, src, size, pos, nextPos)) {
+		*value = true;
+		return true;
 	}
-	for (const auto& sign : SET_BOOL_FALSE_SIGN) {
-		if (sign.size() <= signSize) {
-			continue;
-		}
-		if (MatchSign(sign, src, size, pos, &tmpNextPos)) {
-			signSize = sign.size();
-			*nextPos = tmpNextPos;
-			*value = false;
-		}
+	if (MatchSign(SIGN_BOOL_FALSE, src, size, pos, nextPos)) {
+		*value = false;
+		return true;
 	}
-	return signSize > 0;
+	return false;
 }
 
 bool Syntax::MatchNumber(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos, double* number) {
@@ -511,25 +491,39 @@ bool Syntax::MatchName(const std::string& src, std::size_t size, std::size_t pos
 }
 
 bool Syntax::MatchAssign(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
-	return MatchSignSet(SET_ASSIGN_SIGN, src, size, pos, nextPos);
+	return MatchSign(SIGN_ASSIGN, src, size, pos, nextPos);
 }
 
 bool Syntax::MatchComment(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
-	return MatchSignSet(SET_COMMENT_SIGN, src, size, pos, nextPos);
+	return MatchSign(SIGN_COMMENT, src, size, pos, nextPos);
 }
 bool Syntax::MatchCommentBlockBegin(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
-	return MatchSign(STRING_COMMENT_BLOCK_BEGIN_SIGN, src, size, pos, nextPos);
+	return MatchSign(SIGN_COMMENT_BLOCK_BEGIN, src, size, pos, nextPos);
 }
 bool Syntax::MatchCommentBlockEnd(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
-	return MatchSign(STRING_COMMENT_BLOCK_END_SIGN, src, size, pos, nextPos);
+	return MatchSign(SIGN_COMMENT_BLOCK_END, src, size, pos, nextPos);
 }
 bool Syntax::MatchVariableDefine(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
-	return MatchSignSet(SET_VARIABLE_DEFINE_SIGN, src, size, pos, nextPos);
+	return MatchSign(SIGN_VARIABLE_DEFINE, src, size, pos, nextPos);
 }
 bool Syntax::MatchVariableSet(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
-	return MatchSign(STRING_SET_SIGN, src, size, pos, nextPos);
+	return MatchSign(SIGN_SET, src, size, pos, nextPos);
 }
-bool Syntax::MatchSignSet(const std::unordered_set<std::string>& sign, const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
+bool Syntax::MatchSign(const std::unordered_set<std::string>& sign, const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
+	std::size_t signSize = 0;
+	std::size_t tmpNextPos;
+	for (const auto& item : sign) {
+		if (item.size() <= signSize) {
+			continue;
+		}
+		if (MatchSign(item, src, size, pos, &tmpNextPos)) {
+			signSize = item.size();
+			*nextPos = tmpNextPos;
+		}
+	}
+	return signSize > 0;
+}
+bool Syntax::MatchSign(const std::vector<std::string>& sign, const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
 	std::size_t signSize = 0;
 	std::size_t tmpNextPos;
 	for (const auto& item : sign) {
@@ -599,15 +593,37 @@ bool Syntax::MatchPair(char signLeft, char signRight, const std::string& src, st
 	}
 	++pos;
 	bool bSame = signLeft == signRight;
-	auto beginPos = pos;
 	int count = 0;
-	bool bIgnore = false;
+	bool change = false;
+	std::vector<char> buffers;
+	bool isString = IsGrammarStringSign(signLeft);
+
 	while (pos < size) {
 		char ch = src[pos];
 		do {
-			if (bIgnore) {
+			if (isString && change) {
+				if (ch == '\\') {
+					buffers.emplace_back('\\');
+				} else if (ch == 'n') {
+					buffers.emplace_back('\n');
+				} else if (ch == 't') {
+					buffers.emplace_back('\t');
+				} else if (ch == 'b') {
+					if (!buffers.empty()) {
+						buffers.pop_back();
+					}
+				} else if (ch == 'r') {
+					buffers.emplace_back('\r');
+				} else if (ch == '"') {
+					buffers.emplace_back('\"');
+				} else if (ch == '\'') {
+					buffers.emplace_back('\'');
+				} else {
+					buffers.emplace_back(ch);
+				}
 				break;
 			}
+
 			if (!bSame && (ch == signLeft)) {
 				++count;
 				break;
@@ -617,14 +633,25 @@ bool Syntax::MatchPair(char signLeft, char signRight, const std::string& src, st
 					--count;
 					break;
 				}
-				auto tempSize = pos - beginPos;
-				*result = src.substr(beginPos, tempSize);
+				*result = std::string(buffers.begin(), buffers.end());
 				*nextPos = pos + 1;
 				return true;
 			}
 		} while (false);
 
-		bIgnore = (ch == '\\' ? !bIgnore : false);
+		if (isString) {
+			if (change) {
+				change = false;
+			} else {
+				change = ch == '\\';
+				if (!change) {
+					buffers.emplace_back(ch);
+				}
+			}
+		} else {
+			buffers.emplace_back(ch);
+		}
+
 		++pos;
 	}
 	return false;

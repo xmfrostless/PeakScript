@@ -5,8 +5,8 @@
 
 using namespace peak;
 
-SentenceForeach::SentenceForeach(const std::string& name, std::shared_ptr<SentenceExpression> expression, std::shared_ptr<Sentence> sentence)
-	: _name(name), _expression(expression), _sentence(sentence) {
+SentenceForeach::SentenceForeach(const std::string& name, const std::string& indexParam, std::shared_ptr<SentenceExpression> expression, std::shared_ptr<Sentence> sentence)
+	: _name(name), _indexParam(indexParam), _expression(expression), _sentence(sentence) {
 }
 ExecuteResult SentenceForeach::Execute(std::shared_ptr<Space> space) {
 	if (!IsSuccess(_expression->Execute(space))) {
@@ -30,21 +30,51 @@ ExecuteResult SentenceForeach::Execute(std::shared_ptr<Space> space) {
 		return ExecuteResult::Failed;
 	}
 	auto contentSpace = std::make_shared<Space>(SpaceType::Loop, tempSpace);
-	for (auto item : arr) {
-		itemVariable->SetValue(item->GetValue());
-		contentSpace->Clear();
-		auto ret = _sentence->Execute(contentSpace);
-		if (!IsSuccess(ret)) {
-			ErrorLogger::LogRuntimeError(ErrorRuntimeCode::Foreach, "The sentence execute failed!");
-			return ExecuteResult::Failed;
+
+	if (_indexParam.empty()) {
+		for (auto item : arr) {
+			itemVariable->SetValue(item->GetValue());
+			contentSpace->Clear();
+			auto ret = _sentence->Execute(contentSpace);
+			if (!IsSuccess(ret)) {
+				ErrorLogger::LogRuntimeError(ErrorRuntimeCode::Foreach, "The sentence execute failed!");
+				return ExecuteResult::Failed;
+			}
+			if (ret == ExecuteResult::Break) {
+				break;
+			}
+			if (ret == ExecuteResult::Return) {
+				SetReturnValue(std::static_pointer_cast<SentenceReturn>(_sentence)->GetReturnValue());
+				tempSpace->Clear();
+				return ExecuteResult::Return;
+			}
 		}
-		if (ret == ExecuteResult::Break) {
-			break;
+	} else {
+		auto indexVariable = std::make_shared<Variable>(_indexParam, VariableAttribute::None);
+		if (!_indexParam.empty()) {
+			if (!tempSpace->AddVariable(indexVariable)) {
+				ErrorLogger::LogRuntimeError(_indexParam);
+				ErrorLogger::LogRuntimeError(ErrorRuntimeCode::Loop, "The variable \"" + _indexParam + "\" is exist!");
+				return ExecuteResult::Failed;
+			}
 		}
-		if (ret == ExecuteResult::Return) {
-			SetReturnValue(std::static_pointer_cast<SentenceReturn>(_sentence)->GetReturnValue());
-			tempSpace->Clear();
-			return ExecuteResult::Return;
+		for (auto i = 0u; i < arr.size(); ++i) {
+			indexVariable->SetValue(std::make_shared<ValueNumber>(i));
+			itemVariable->SetValue(arr[i]->GetValue());
+			contentSpace->Clear();
+			auto ret = _sentence->Execute(contentSpace);
+			if (!IsSuccess(ret)) {
+				ErrorLogger::LogRuntimeError(ErrorRuntimeCode::Foreach, "The sentence execute failed!");
+				return ExecuteResult::Failed;
+			}
+			if (ret == ExecuteResult::Break) {
+				break;
+			}
+			if (ret == ExecuteResult::Return) {
+				SetReturnValue(std::static_pointer_cast<SentenceReturn>(_sentence)->GetReturnValue());
+				tempSpace->Clear();
+				return ExecuteResult::Return;
+			}
 		}
 	}
 	tempSpace->Clear();

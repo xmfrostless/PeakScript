@@ -5,7 +5,7 @@ using namespace peak;
 ValueString::ValueString(const std::string& value)
 	: _value(value) {
 }
-const std::string& ValueString::GetValue() const {
+std::string& ValueString::GetValue() {
 	return _value;
 }
 std::string ValueString::ToString() const {

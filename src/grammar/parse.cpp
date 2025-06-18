@@ -654,6 +654,10 @@ std::shared_ptr<Sentence> Parse::_ParseLoop(const std::string& src, std::size_t 
 		Jump(src, size, pos, &pos);
 	}
 
+	if (Syntax::MatchVariableDefine(src, size, pos, &pos)) {
+		Jump(src, size, pos, &pos);
+	}
+
 	std::string name;
 	auto savePos = pos;
 	bool bMatchName = Syntax::MatchName(src, size, pos, &pos, &name);
@@ -661,7 +665,7 @@ std::shared_ptr<Sentence> Parse::_ParseLoop(const std::string& src, std::size_t 
 		Jump(src, size, pos, &pos);
 	}
 
-	if (Syntax::MatchForeachIn(src, size, pos, &pos)) {
+	if (Syntax::MatchForIn(src, size, pos, &pos)) {
 		Jump(src, size, pos, &pos);
 	} else {
 		if (bMatchName) {
@@ -736,10 +740,8 @@ std::shared_ptr<Sentence> Parse::_ParseFor(const std::string& src, std::size_t s
 }
 
 std::shared_ptr<Sentence> Parse::_ParseForeach(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
-	if (!Syntax::MatchForeach(src, size, pos, &pos)) {
-		if (!Syntax::MatchFor(src, size, pos, &pos)) {
-			return nullptr;
-		}
+	if (!Syntax::MatchFor(src, size, pos, &pos)) {
+		return nullptr;
 	}
 	Jump(src, size, pos, &pos);
 
@@ -755,8 +757,18 @@ std::shared_ptr<Sentence> Parse::_ParseForeach(const std::string& src, std::size
 	if (!Syntax::MatchName(src, size, pos, &pos, &name)) {
 		return nullptr;
 	}
+
 	Jump(src, size, pos, &pos);
-	if (!Syntax::MatchForeachIn(src, size, pos, &pos)) {
+	std::string indexParam;
+	if (Syntax::MatchSplitSymbol(src, size, pos, &pos)) {
+		Jump(src, size, pos, &pos);
+		if (!Syntax::MatchName(src, size, pos, &pos, &indexParam)) {
+			return nullptr;
+		}
+	}
+
+	Jump(src, size, pos, &pos);
+	if (!Syntax::MatchForIn(src, size, pos, &pos)) {
 		return nullptr;
 	}
 	Jump(src, size, pos, &pos);
@@ -777,7 +789,7 @@ std::shared_ptr<Sentence> Parse::_ParseForeach(const std::string& src, std::size
 		return nullptr;
 	}
 	*nextPos = pos;
-	return std::make_shared<SentenceForeach>(name, expression, sentence);
+	return std::make_shared<SentenceForeach>(name, indexParam, expression, sentence);
 }
 
 std::shared_ptr<Sentence> Parse::_ParseWhile(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {

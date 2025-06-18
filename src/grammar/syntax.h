@@ -8,9 +8,9 @@
 #include <string>
 #include <unordered_set>
 
-namespace peak { 
+namespace peak {
 
-enum class MathSymbol : char {
+enum class MathSymbol: char {
 	None,
 	LessEqual, // <=
 	MoreEqual, // >=
@@ -32,7 +32,7 @@ enum class MathSymbol : char {
 	Sub,	   // -
 };
 
-enum class DoubleSymbol : char {
+enum class DoubleSymbol: char {
 	AddAdd, // ++
 	SubSub, // --
 };
@@ -85,8 +85,7 @@ public:
 	static bool MatchConditionIf(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos);
 	static bool MatchConditionElse(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos);
 	static bool MatchFor(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos);
-	static bool MatchForeach(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos);
-	static bool MatchForeachIn(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos);
+	static bool MatchForIn(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos);
 	static bool MatchWhile(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos);
 	static bool MatchDo(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos);
 	static bool MatchLoop(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos);
@@ -103,7 +102,8 @@ public:
 	static bool MatchCommentBlockEnd(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos);
 	static bool MatchVariableDefine(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos);
 	static bool MatchVariableSet(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos);
-	static bool MatchSignSet(const std::unordered_set<std::string>& sign, const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos);
+	static bool MatchSign(const std::unordered_set<std::string>& sign, const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos);
+	static bool MatchSign(const std::vector<std::string>& sign, const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos);
 	static bool MatchSign(const std::string& sign, const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos);
 	static bool MatchSign(char sign, const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos);
 	static bool MatchPair(const std::string& signLeft, const std::string& signRight, const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos, std::string* result);
