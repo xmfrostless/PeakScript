@@ -12,7 +12,5 @@
 #include "runtime/system.h"
 #include "runtime/value/value_tool.h"
 #include "runtime/variable.h"
-
-#include "virtual_journey.h"
-#include "virtual_machine.h"
+#include "script.h"
 
