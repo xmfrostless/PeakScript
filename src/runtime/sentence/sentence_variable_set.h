@@ -1,6 +1,6 @@
 /*
-	PeakScript: https://github.com/Jenocn/PeakScript
-	By Jenocn: https://jenocn.github.io
+	PeakScript: https://github.com/xmfrostless/PeakScript
+	By xmfrostless
 */
 
 #pragma once
