@@ -17,6 +17,14 @@ std::shared_ptr<Module> BuiltModuleConsole::CreateModule() {
 
     auto space = std::make_shared<Space>(SpaceType::None);
 
+    _InsertFunction(space, "clear", 0, [](const std::vector<std::shared_ptr<Value>>&, std::shared_ptr<Space>) -> std::shared_ptr<Value> {
+#if defined(_WIN32)
+        system("cls");
+#else
+        system("clear");
+#endif
+        return ValueNull::DEFAULT_VALUE;
+    });
     _InsertFunction(space, "input", 0, [](const std::vector<std::shared_ptr<Value>>&, std::shared_ptr<Space>) -> std::shared_ptr<Value> {
         std::string ret;
         std::getline(std::cin, ret);

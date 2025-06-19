@@ -2,6 +2,7 @@
 #include "runtime/value/value_tool.h"
 #include "runtime/variable.h"
 #include "runtime/sentence/sentence_expression_variable.h"
+#include "runtime/sentence/sentence_expression_function_call.h"
 
 using namespace peak;
 
@@ -107,15 +108,26 @@ std::shared_ptr<Variable> ExpressionVariableAnalysisInside::Execute(std::shared_
 			return nullptr;
 		}
 		auto objSpace = std::static_pointer_cast<ValueObject>(tempValue)->GetSpace();
-		if (expression->GetExpressionType() != ExpressionType::Variable) {
+		auto expressionType = expression->GetExpressionType();
+		auto executeRet = ExecuteResult::Failed;
+		if (expressionType == ExpressionType::Function) {
+			executeRet = std::static_pointer_cast<SentenceExpressionFunctionCall>(expression)->ExecuteFromInside(objSpace, space);
+			if (!Sentence::IsSuccess(executeRet)) {
+				ErrorLogger::LogRuntimeError(ErrorRuntimeCode::VariableInsideAnalysis, "The inside expression execute failed!");
+				return nullptr;
+			}
+			retVariable = std::make_shared<Variable>("", VariableAttribute::Const);
+		} else if (expressionType == ExpressionType::Variable) {
+			executeRet = expression->Execute(objSpace);
+			if (!Sentence::IsSuccess(executeRet)) {
+				ErrorLogger::LogRuntimeError(ErrorRuntimeCode::VariableInsideAnalysis, "The inside expression execute failed!");
+				return nullptr;
+			}
+			retVariable = std::static_pointer_cast<SentenceExpressionVariable>(expression)->GetVariable();
+		} else {
 			ErrorLogger::LogRuntimeError(ErrorRuntimeCode::VariableInsideAnalysis, "The inside expression can't return a variable!");
 			return nullptr;
 		}
-		if (!Sentence::IsSuccess(expression->Execute(objSpace))) {
-			ErrorLogger::LogRuntimeError(ErrorRuntimeCode::VariableInsideAnalysis, "The inside expression execute failed!");
-			return nullptr;
-		}
-		retVariable = std::static_pointer_cast<SentenceExpressionVariable>(expression)->GetVariable();
 		tempValue = expression->GetValue();
 	}
 	return retVariable;
