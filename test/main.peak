@@ -101,9 +101,9 @@ function sort_test(nums, name, sort_func, show_nums) {
 }
 
 function get_nums(size) {
-    var nums = [];
+    var nums = arrays.create(size, 0);
     loop (i in size) {
-        arrays.append(nums, size - i - 1);
+        nums[i] = size - i - 1;
     }
     return nums;
 }

@@ -90,6 +90,14 @@ std::shared_ptr<Module> BuiltModuleMath::CreateModule() {
         const auto& num = std::static_pointer_cast<ValueNumber>(args[0])->GetValue();
         return std::make_shared<ValueNumber>(std::round(num));
     });
+    
+    _InsertFunction(space, "abs", 1, [](const std::vector<std::shared_ptr<Value>>& args, std::shared_ptr<Space>) -> std::shared_ptr<Value> {
+        if (!ValueTool::IsNumber(args[0].get())) {
+            return nullptr;
+        }
+        const auto& num = std::static_pointer_cast<ValueNumber>(args[0])->GetValue();
+        return std::make_shared<ValueNumber>(std::abs(num));
+    });
 
     return std::make_shared<Module>(space);
 }

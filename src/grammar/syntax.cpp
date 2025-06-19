@@ -1,7 +1,4 @@
 #include "syntax.h"
-#include <unordered_set>
-#include <unordered_map>
-#include <vector>
 
 using namespace peak;
 
@@ -86,7 +83,7 @@ bool Syntax::IsTextNewLine(char ch) {
 	return (SIGN_SET_TEXT_NEW_LINE.find(ch) != SIGN_SET_TEXT_NEW_LINE.end());
 }
 bool Syntax::IsTextSpecialChar(char ch) {
-	return (ch >= 0 && ch <= 47) || (ch >= 58 && ch <= 64) || (ch >= 91 && ch <= 94) || (ch == 96) || (ch >= 123 && ch <= 127);
+	return (ch >= 0 && ch <= 47) || (ch >= 58 && ch <= 64) || (ch >= 91 && ch <= 94) || (ch == 96) || (ch >= 123);
 }
 bool Syntax::IsTextNumber(char ch) {
 	return ch >= '0' && ch <= '9';

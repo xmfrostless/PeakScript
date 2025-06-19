@@ -19,8 +19,20 @@ std::shared_ptr<Module> BuiltModuleRandom::CreateModule() {
 
     srand(static_cast<unsigned int>(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()).count()));
 
-    _InsertFunction(space, "rand", 0, [](const std::vector<std::shared_ptr<Value>>&, std::shared_ptr<Space>) -> std::shared_ptr<Value> {
+    _InsertFunction(space, "rand_int", 0, [](const std::vector<std::shared_ptr<Value>>&, std::shared_ptr<Space>) -> std::shared_ptr<Value> {
         return std::make_shared<ValueNumber>(rand());
+    });
+
+    _InsertFunction(space, "range_int", 2, [](const std::vector<std::shared_ptr<Value>>& args, std::shared_ptr<Space>) -> std::shared_ptr<Value> {
+        if (ValueTool::IsInteger(args[0].get()) && ValueTool::IsInteger(args[1].get())) {
+            auto left = static_cast<long long>(std::static_pointer_cast<ValueNumber>(args[0])->GetValue());
+            auto right = static_cast<long long>(std::static_pointer_cast<ValueNumber>(args[1])->GetValue());
+            if (left >= right) {
+                return nullptr;
+            }
+            return std::make_shared<ValueNumber>(static_cast<double>(left + rand() % (right - left)));
+        }
+        return nullptr;
     });
 
     return std::make_shared<Module>(space);

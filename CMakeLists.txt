@@ -16,9 +16,9 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
 	add_compile_options("/source-charset:utf-8")
 	# add_compile_options("/MT")
 elseif (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-	set(CXXFLAGS "-Wall" "-Wextra" "-pedantic")
+	set(CXXFLAGS "-Wall" "-Wextra" "-pedantic" "-std=c++17" "-O2")
 elseif (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-	set(CXXFLAGS "-Wall" "-Wextra" "-pedantic")
+	set(CXXFLAGS "-Wall" "-Wextra" "-pedantic" "-std=c++17" "-O2")
 endif()
 
 message("> " ${CMAKE_CXX_COMPILER_ID} " " ${CXXFLAGS})
@@ -36,6 +36,14 @@ file(GLOB_RECURSE REMOVE_SOURCES "./src/._*")
 list(REMOVE_ITEM SOURCES ${REMOVE_SOURCES})
 
 add_library(${PeakScript} STATIC ${SOURCES})
+
+# cli-peak
+include_directories("./cli-peak")
+file (GLOB_RECURSE CLI_PEAK_SOURCES "./cli-peak/*.cpp" "./cli-peak/*.h")
+file(GLOB_RECURSE REMOVE_CLI_PEAK_SOURCES "./cli-peak/._*")
+list(REMOVE_ITEM CLI_PEAK_SOURCES ${REMOVE_CLI_PEAK_SOURCES})
+add_executable("peak" ${CLI_PEAK_SOURCES})
+target_link_libraries("peak" ${PeakScript})
 
 # test
 include_directories("./test")

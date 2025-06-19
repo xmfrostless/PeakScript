@@ -27,7 +27,7 @@ std::shared_ptr<Module> BuiltModuleTime::CreateModule() {
         std::time_t now_time = std::chrono::system_clock::to_time_t(now);
         std::tm now_tm;
 
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) || defined(_WIN32)
         if (gmtime_s(&now_tm, &now_time) != 0) {
             return nullptr;
         }
@@ -59,7 +59,7 @@ std::shared_ptr<Module> BuiltModuleTime::CreateModule() {
         std::time_t now_time = std::chrono::system_clock::to_time_t(now);
         std::tm now_tm;
 
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) || defined(_WIN32)
         if (localtime_s(&now_tm, &now_time) != 0) {
             return nullptr;
         }
