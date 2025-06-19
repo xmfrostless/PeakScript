@@ -1,7 +1,7 @@
-import "arrays" as arrays;
-import "time" as time;
-import "math" as math;
-import "algorithm" as algorithm;
+import arrays;
+import time;
+import math;
+import algorithm;
 
 // insertion
 function insertion_sort(nums) {
