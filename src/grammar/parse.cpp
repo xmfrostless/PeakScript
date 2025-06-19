@@ -284,14 +284,19 @@ std::shared_ptr<Sentence> Parse::_ParseImport(const std::string& src, std::size_
 	if (pos >= size) {
 		return nullptr;
 	}
+
 	std::string moduleName;
+	std::string alias { "" };
+
 	if (!Syntax::MatchString(src, size, pos, &pos, &moduleName)) {
-		return nullptr;
+		if (!Syntax::MatchName(src, size, pos, &pos, &moduleName)) {
+			return nullptr;
+		}
+		alias = moduleName;
 	}
 
 	Jump(src, size, pos, &pos);
 
-	std::string alias { "" };
 	if (Syntax::MatchImportAs(src, size, pos, &pos)) {
 		Jump(src, size, pos, &pos);
 		if (!Syntax::MatchName(src, size, pos, &pos, &alias)) {
