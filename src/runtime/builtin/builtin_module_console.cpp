@@ -21,7 +21,10 @@ std::shared_ptr<Module> BuiltModuleConsole::CreateModule() {
 #if defined(_WIN32)
         system("cls");
 #else
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-result"
         system("clear");
+#pragma GCC diagnostic pop
 #endif
         return ValueNull::DEFAULT_VALUE;
     });
