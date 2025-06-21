@@ -12,14 +12,18 @@ namespace peak {
 struct ParseData;
 class Space;
 class Variable;
+class Value;
 
 class Executer {
 public:
 	static std::shared_ptr<Executer> Create(const std::string& src);
+
+public:
 	Executer(std::shared_ptr<ParseData> data);
 	~Executer();
 	
 	bool Execute();
+	std::shared_ptr<Value> ExecuteExpression(const std::string& src);
 
 	std::shared_ptr<Space> GetSpace() const;
 

@@ -45,6 +45,10 @@ bool Script::Execute() {
 	return _executer->Execute();
 }
 
+std::shared_ptr<Value> Script::ExecuteExpression(const std::string& src) {
+	return _executer->ExecuteExpression(src);
+}
+
 std::shared_ptr<Space> Script::GetSpace() const {
 	return _executer->GetSpace();
 }

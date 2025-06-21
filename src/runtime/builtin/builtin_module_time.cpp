@@ -16,13 +16,26 @@ std::shared_ptr<Module> BuiltModuleTime::CreateModule() {
 
     auto space = std::make_shared<Space>(SpaceType::None);
 
+    auto date_time = std::make_shared<ValueObject>();
+    {
+        auto retSpace = date_time->GetSpace();
+        auto zero = std::make_shared<ValueNumber>(0);
+        retSpace->AddVariable(std::make_shared<Variable>("year", VariableAttribute::None, zero));
+        retSpace->AddVariable(std::make_shared<Variable>("month", VariableAttribute::None, zero));
+        retSpace->AddVariable(std::make_shared<Variable>("day", VariableAttribute::None, zero));
+        retSpace->AddVariable(std::make_shared<Variable>("hour", VariableAttribute::None, zero));
+        retSpace->AddVariable(std::make_shared<Variable>("minute", VariableAttribute::None, zero));
+        retSpace->AddVariable(std::make_shared<Variable>("second", VariableAttribute::None, zero));
+    }
+    _InsertConst(space, "DateTime", date_time);
+
     _InsertFunction(space, "get_tick", 0, [](const std::vector<std::shared_ptr<Value>>&, std::shared_ptr<Space>) -> std::shared_ptr<Value> {
         auto now = std::chrono::system_clock::now();
         auto duration = now.time_since_epoch();
         auto tick = std::chrono::duration_cast<std::chrono::microseconds>(duration).count();
         return std::make_shared<ValueNumber>(static_cast<double>(tick));
     });
-    _InsertFunction(space, "get_utc_time", 0, [](const std::vector<std::shared_ptr<Value>>&, std::shared_ptr<Space>) -> std::shared_ptr<Value> {
+    _InsertFunction(space, "get_utc_time", 0, [date_time](const std::vector<std::shared_ptr<Value>>&, std::shared_ptr<Space>) -> std::shared_ptr<Value> {
         auto now = std::chrono::system_clock::now();
         std::time_t now_time = std::chrono::system_clock::to_time_t(now);
         std::tm now_tm;
@@ -43,18 +56,17 @@ std::shared_ptr<Module> BuiltModuleTime::CreateModule() {
         auto minute = std::make_shared<ValueNumber>(static_cast<double>(now_tm.tm_min));
         auto second = std::make_shared<ValueNumber>(static_cast<double>(now_tm.tm_sec));
 
-        auto ret = std::make_shared<ValueObject>();
-        auto retSpace = ret->GetSpace();
-        retSpace->AddVariable(std::make_shared<Variable>("year", VariableAttribute::None, year));
-        retSpace->AddVariable(std::make_shared<Variable>("month", VariableAttribute::None, month));
-        retSpace->AddVariable(std::make_shared<Variable>("day", VariableAttribute::None, day));
-
-        retSpace->AddVariable(std::make_shared<Variable>("hour", VariableAttribute::None, hour));
-        retSpace->AddVariable(std::make_shared<Variable>("minute", VariableAttribute::None, minute));
-        retSpace->AddVariable(std::make_shared<Variable>("second", VariableAttribute::None, second));
+        auto ret = std::static_pointer_cast<ValueObject>(date_time->Clone());
+        auto& variables = ret->GetSpace()->GetVariables();
+        variables["year"]->SetValue(year);
+        variables["month"]->SetValue(month);
+        variables["day"]->SetValue(day);
+        variables["hour"]->SetValue(hour);
+        variables["minute"]->SetValue(minute);
+        variables["second"]->SetValue(second);
         return ret;
     });
-    _InsertFunction(space, "get_local_time", 0, [](const std::vector<std::shared_ptr<Value>>&, std::shared_ptr<Space>) -> std::shared_ptr<Value> {
+    _InsertFunction(space, "get_local_time", 0, [date_time](const std::vector<std::shared_ptr<Value>>&, std::shared_ptr<Space>) -> std::shared_ptr<Value> {
         auto now = std::chrono::system_clock::now();
         std::time_t now_time = std::chrono::system_clock::to_time_t(now);
         std::tm now_tm;
@@ -75,15 +87,14 @@ std::shared_ptr<Module> BuiltModuleTime::CreateModule() {
         auto minute = std::make_shared<ValueNumber>(static_cast<double>(now_tm.tm_min));
         auto second = std::make_shared<ValueNumber>(static_cast<double>(now_tm.tm_sec));
 
-        auto ret = std::make_shared<ValueObject>();
-        auto retSpace = ret->GetSpace();
-        retSpace->AddVariable(std::make_shared<Variable>("year", VariableAttribute::None, year));
-        retSpace->AddVariable(std::make_shared<Variable>("month", VariableAttribute::None, month));
-        retSpace->AddVariable(std::make_shared<Variable>("day", VariableAttribute::None, day));
-
-        retSpace->AddVariable(std::make_shared<Variable>("hour", VariableAttribute::None, hour));
-        retSpace->AddVariable(std::make_shared<Variable>("minute", VariableAttribute::None, minute));
-        retSpace->AddVariable(std::make_shared<Variable>("second", VariableAttribute::None, second));
+        auto ret = std::static_pointer_cast<ValueObject>(date_time->Clone());
+        auto& variables = ret->GetSpace()->GetVariables();
+        variables["year"]->SetValue(year);
+        variables["month"]->SetValue(month);
+        variables["day"]->SetValue(day);
+        variables["hour"]->SetValue(hour);
+        variables["minute"]->SetValue(minute);
+        variables["second"]->SetValue(second);
         return ret;
     });
 

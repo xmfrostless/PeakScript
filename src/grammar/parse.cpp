@@ -119,6 +119,11 @@ std::shared_ptr<ParseData> Parse::Load(const std::string& src) {
 	return retData;
 }
 
+std::shared_ptr<SentenceExpression> Parse::LoadExpression(const std::string& src) {
+	std::size_t pos;
+	return _ParseExpression(src, src.size(), 0, &pos);
+}
+
 bool Parse::Jump(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
 	bool bJump = false;
 	bool bRet = false;

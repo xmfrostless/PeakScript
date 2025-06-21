@@ -27,6 +27,7 @@ public:
 public:
 	Script(std::shared_ptr<Executer> executer);
 	bool Execute();
+	std::shared_ptr<Value> ExecuteExpression(const std::string& src);
 	std::shared_ptr<Space> GetSpace() const;
 	std::shared_ptr<Variable> FindVariable(const std::string& name) const;
 	bool AddVariable(std::shared_ptr<Variable> variable);

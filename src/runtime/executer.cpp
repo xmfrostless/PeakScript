@@ -1,6 +1,8 @@
 #include "executer.h"
 #include "grammar/parse.h"
 #include "sentence/sentence.h"
+#include "sentence/sentence_expression.h"
+#include "runtime/value/value_tool.h"
 #include "space.h"
 
 using namespace peak;
@@ -33,6 +35,15 @@ bool Executer::Execute() {
 		}
 	}
 	return true;
+}
+
+std::shared_ptr<Value> Executer::ExecuteExpression(const std::string& src) {
+	auto exp = Parse::LoadExpression(src);
+	if (!exp) { return nullptr; }
+	if (!Sentence::IsSuccess(exp->Execute(_space))) {
+		return nullptr;
+	}
+	return exp->GetValue();
 }
 
 std::shared_ptr<Space> Executer::GetSpace() const {

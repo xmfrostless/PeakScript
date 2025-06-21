@@ -24,6 +24,7 @@ struct ParseData {
 class Parse {
 public:
 	static std::shared_ptr<ParseData> Load(const std::string& src);
+	static std::shared_ptr<SentenceExpression> LoadExpression(const std::string& src);
 
 private:
 	static bool Jump(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos);
