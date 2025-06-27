@@ -111,6 +111,34 @@ bool ValueTool::CanMore(Value* a, Value* b) {
 	return IsNumber(a) || IsString(a);
 }
 
+ValueObject* ValueTool::TryGetObject(Value* value) {
+	if (!IsObject(value)) { return nullptr; }
+	return static_cast<ValueObject*>(value);
+}
+ValueNumber* ValueTool::TryGetNumber(Value* value) {
+	if (!IsNumber(value)) { return nullptr; }
+	return static_cast<ValueNumber*>(value);
+}
+ValueBool* ValueTool::TryGetBool(Value* value) {
+	if (!IsBool(value)) { return nullptr; }
+	return static_cast<ValueBool*>(value);
+}
+ValueArray* ValueTool::TryGetArray(Value* value) {
+	if (!IsArray(value)) { return nullptr; }
+	return static_cast<ValueArray*>(value);
+}
+ValueFunction* ValueTool::TryGetFunction(Value* value) {
+	if (!IsFunction(value)) { return nullptr; }
+	return static_cast<ValueFunction*>(value);
+}
+ValueString* ValueTool::TryGetString(Value* value) {
+	if (!IsString(value)) { return nullptr; }
+	return static_cast<ValueString*>(value);
+}
+ValueNull* ValueTool::TryGetNull(Value* value) {
+	if (!IsNull(value)) { return nullptr; }
+	return static_cast<ValueNull*>(value);
+}
 
 bool ValueTool::IsInteger(Value* value) {
 	if (!IsNumber(value)) {

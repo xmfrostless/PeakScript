@@ -34,6 +34,14 @@ public:
 	static bool More(Value* a, Value* b);
 	static bool CanMore(Value* a, Value* b);
 
+	static ValueObject* TryGetObject(Value* value);
+	static ValueNumber* TryGetNumber(Value* value);
+	static ValueBool* TryGetBool(Value* value);
+	static ValueArray* TryGetArray(Value* value);
+	static ValueFunction* TryGetFunction(Value* value);
+	static ValueString* TryGetString(Value* value);
+	static ValueNull* TryGetNull(Value* value);
+
 	static bool IsInteger(Value* value);
 };
 

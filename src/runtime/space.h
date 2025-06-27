@@ -33,6 +33,15 @@ public:
 	void AddSpaceOfUsing(std::shared_ptr<Space> space);
 	std::shared_ptr<Variable> FindVariable(const std::string& name) const;
 	std::shared_ptr<Variable> FindVariableFromTop(const std::string& name) const;
+	std::shared_ptr<Value> FindVariableValue(const std::string& name) const;
+	std::shared_ptr<ValueArray> FindVariableValueAsArray(const std::string& name) const;
+	std::shared_ptr<ValueBool> FindVariableValueAsBool(const std::string& name) const;
+	std::shared_ptr<ValueFunction> FindVariableValueAsFunction(const std::string& name) const;
+	std::shared_ptr<ValueNull> FindVariableValueAsNull(const std::string& name) const;
+	std::shared_ptr<ValueNumber> FindVariableValueAsNumber(const std::string& name) const;
+	std::shared_ptr<ValueObject> FindVariableValueAsObject(const std::string& name) const;
+	std::shared_ptr<ValueString> FindVariableValueAsString(const std::string& name) const;
+
 
 	SpaceType GetSpaceType() const;
 	std::unordered_map<std::string, std::shared_ptr<Variable>>& GetVariables();

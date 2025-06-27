@@ -16,7 +16,7 @@ Space::Space(SpaceType spaceType, std::shared_ptr<Space> parent)
 }
 
 std::shared_ptr<Space> Space::CopySpace() const {
-	std::shared_ptr<Space> parent{nullptr};
+	std::shared_ptr<Space> parent { nullptr };
 	if (_parent) {
 		parent = _parent->CopySpace();
 	}
@@ -74,6 +74,64 @@ std::shared_ptr<Variable> Space::FindVariable(const std::string& name) const {
 		}
 	}
 	return BuiltInFunction::GetInstance()->FindVariable(name);
+}
+
+std::shared_ptr<Value> Space::FindVariableValue(const std::string& name) const {
+	auto va = FindVariable(name);
+	if (!va) {
+		return nullptr;
+	}
+	return va->GetValue();
+}
+
+std::shared_ptr<ValueArray> Space::FindVariableValueAsArray(const std::string& name) const {
+	auto value = FindVariableValue(name);
+	if (!value || !ValueTool::IsArray(value.get())) {
+		return nullptr;
+	}
+	return std::static_pointer_cast<ValueArray>(value);
+}
+std::shared_ptr<ValueBool> Space::FindVariableValueAsBool(const std::string& name) const {
+	auto value = FindVariableValue(name);
+	if (!value || !ValueTool::IsBool(value.get())) {
+		return nullptr;
+	}
+	return std::static_pointer_cast<ValueBool>(value);
+}
+std::shared_ptr<ValueFunction> Space::FindVariableValueAsFunction(const std::string& name) const {
+	auto value = FindVariableValue(name);
+	if (!value || !ValueTool::IsFunction(value.get())) {
+		return nullptr;
+	}
+	return std::static_pointer_cast<ValueFunction>(value);
+}
+std::shared_ptr<ValueNull> Space::FindVariableValueAsNull(const std::string& name) const {
+	auto value = FindVariableValue(name);
+	if (!value || !ValueTool::IsNull(value.get())) {
+		return nullptr;
+	}
+	return std::static_pointer_cast<ValueNull>(value);
+}
+std::shared_ptr<ValueNumber> Space::FindVariableValueAsNumber(const std::string& name) const {
+	auto value = FindVariableValue(name);
+	if (!value || !ValueTool::IsNumber(value.get())) {
+		return nullptr;
+	}
+	return std::static_pointer_cast<ValueNumber>(value);
+}
+std::shared_ptr<ValueObject> Space::FindVariableValueAsObject(const std::string& name) const {
+	auto value = FindVariableValue(name);
+	if (!value || !ValueTool::IsObject(value.get())) {
+		return nullptr;
+	}
+	return std::static_pointer_cast<ValueObject>(value);
+}
+std::shared_ptr<ValueString> Space::FindVariableValueAsString(const std::string& name) const {
+	auto value = FindVariableValue(name);
+	if (!value || !ValueTool::IsString(value.get())) {
+		return nullptr;
+	}
+	return std::static_pointer_cast<ValueString>(value);
 }
 
 SpaceType Space::GetSpaceType() const {
