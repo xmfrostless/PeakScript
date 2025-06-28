@@ -15,7 +15,7 @@ class Module;
 class ValueObject: public TypeValue<ValueObject> {
 public:
 	ValueObject(std::shared_ptr<Module> module);
-	ValueObject(std::shared_ptr<Space> indexSpace = nullptr, std::shared_ptr<ValueObject> parent = nullptr);
+	ValueObject(std::shared_ptr<Space> indexSpace = nullptr);
 	virtual std::shared_ptr<Value> Clone() const override;
 	std::shared_ptr<Space> GetSpace() const;
 	virtual std::string ToString() const override;

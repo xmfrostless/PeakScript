@@ -1,3 +1,6 @@
+echo "> =========================================";
+echo "sentence_object.peak";
+echo "========================================= <";
 
 object Abc {
     var x;
@@ -9,9 +12,11 @@ echo Abc;
 var a = new Abc;
 a.x = true;
 echo a;
-echo Abc.x;
+echo Abc;
 
 object Child : Abc {
     var z = 100;
 }
+Child.x = 9999;
 echo Child;
+echo Abc;

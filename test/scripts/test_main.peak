@@ -1,3 +1,6 @@
+echo "> =========================================";
+echo "main.peak";
+echo "========================================= <";
 
 import "sentence_block.peak";
 import "sentence_condition.peak";

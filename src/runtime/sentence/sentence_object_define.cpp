@@ -29,13 +29,23 @@ ExecuteResult SentenceObjectDefine::Execute(std::shared_ptr<Space> space) {
 		}
 		parentObject = std::static_pointer_cast<ValueObject>(parentValue);
 	}
-	auto valueObject = std::make_shared<ValueObject>(space, parentObject);
+	auto valueObject = std::make_shared<ValueObject>(space);
 	auto objectSpace = valueObject->GetSpace();
 	for (auto& sentence : _sentenceList) {
 		if (!IsSuccess(sentence->Execute(objectSpace))) {
 			ErrorLogger::LogRuntimeError(_name);
 			ErrorLogger::LogRuntimeError(ErrorRuntimeCode::ObjectDefine, "The object build failed!");
 			return ExecuteResult::Failed;
+		}
+	}
+
+	if (parentObject) {
+		const auto& parentVariables = parentObject->GetSpace()->GetVariables();
+		for (const auto& item : parentVariables) {
+			if (objectSpace->GetVariableInSelf(item.first)) {
+				continue;
+			}
+			objectSpace->AddVariable(item.second->Clone());
 		}
 	}
 

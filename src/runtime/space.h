@@ -30,15 +30,14 @@ public:
 	std::shared_ptr<Space> CopySpace() const;
 	void Clear();
 
-	void SetParent(std::shared_ptr<Space> parent);
 	void AddUsingSpace(std::shared_ptr<Space> space);
 	bool AddVariable(std::shared_ptr<Variable> value);
 
 	std::shared_ptr<Variable> FindVariable(std::size_t hashCode) const;
-	std::shared_ptr<Variable> FindVariableFromTop(std::size_t hashCode) const;
+	std::shared_ptr<Variable> GetVariableInSelf(std::size_t hashCode) const;
 
 	std::shared_ptr<Variable> FindVariable(const std::string& name) const;
-	std::shared_ptr<Variable> FindVariableFromTop(const std::string& name) const;
+	std::shared_ptr<Variable> GetVariableInSelf(const std::string& name) const;
 
 	std::shared_ptr<Value> FindVariableValue(const std::string& name) const;
 	std::shared_ptr<ValueArray> FindVariableValueAsArray(const std::string& name) const;
@@ -55,7 +54,6 @@ public:
 private:
 	SpaceType _spaceType { SpaceType::None };
 	std::shared_ptr<Space> _outSpace { nullptr };
-	std::shared_ptr<Space> _parent { nullptr };
 	std::vector<std::shared_ptr<Space>> _usingSpace;
 	std::unordered_map<std::size_t, std::shared_ptr<Variable>> _variables;
 };

@@ -22,7 +22,7 @@ ExecuteResult SentenceFunctionDefine::Execute(std::shared_ptr<Space> space) {
 		return std::make_shared<ValueNull>();
 	};
 
-	auto variable = space->FindVariableFromTop(_hashCode);
+	auto variable = space->GetVariableInSelf(_hashCode);
 	if (variable) {
 		ErrorLogger::LogRuntimeError(_name);
 		ErrorLogger::LogRuntimeError(ErrorRuntimeCode::FunctionDefine, "The \"" + _name + "\" is exist!");

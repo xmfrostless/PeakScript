@@ -1,3 +1,6 @@
+echo "> =========================================";
+echo "sentence_import.peak";
+echo "========================================= <";
 
 import "console";
 log("console 0");

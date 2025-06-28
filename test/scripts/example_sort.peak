@@ -1,3 +1,7 @@
+echo "> =========================================";
+echo "example_sort.peak";
+echo "========================================= <";
+
 import arrays;
 import time;
 import math;

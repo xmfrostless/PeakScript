@@ -1,3 +1,6 @@
+echo "> =========================================";
+echo "sentence_condition.peak";
+echo "========================================= <";
 
 function test(num) {
     if num == 1 {

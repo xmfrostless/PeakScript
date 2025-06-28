@@ -1,4 +1,8 @@
 
+echo "> =========================================";
+echo "module.peak";
+echo "========================================= <";
+
 import algorithm;
 import arrays;
 import console;

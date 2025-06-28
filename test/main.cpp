@@ -2,7 +2,6 @@
 #include <peak.h>
 
 void add_search_path(const std::filesystem::path& path) {
-    std::cout << path << std::endl;
     peak::System::AddSearchSrcDir(path.string());
     peak::System::AddSearchSrcDir((path / "test/scripts").string());
     peak::System::AddSearchSrcDir((path / "scripts").string());

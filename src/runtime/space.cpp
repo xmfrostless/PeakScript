@@ -17,7 +17,6 @@ Space::Space(SpaceType spaceType, std::shared_ptr<Space> outSpace)
 
 std::shared_ptr<Space> Space::CopySpace() const {
 	auto space = std::make_shared<Space>(_spaceType);
-	space->SetParent(_parent ? _parent->CopySpace() : nullptr);
 	space->_usingSpace = _usingSpace;
 
 	for (auto& pair : _variables) {
@@ -29,10 +28,6 @@ std::shared_ptr<Space> Space::CopySpace() const {
 void Space::Clear() {
 	_variables.clear();
 	_usingSpace.clear();
-}
-
-void Space::SetParent(std::shared_ptr<Space> parent) {
-	this->_parent = parent;
 }
 
 void Space::AddUsingSpace(std::shared_ptr<Space> space) {
@@ -61,12 +56,6 @@ std::shared_ptr<Variable> Space::FindVariable(std::size_t hashCode) const {
 	if (ite != _variables.end()) {
 		return ite->second;
 	}
-	if (_parent) {
-		auto ret = _parent->FindVariable(hashCode);
-		if (ret) {
-			return ret;
-		}
-	}
 	if (_outSpace) {
 		auto ret = _outSpace->FindVariable(hashCode);
 		if (ret) {
@@ -81,7 +70,7 @@ std::shared_ptr<Variable> Space::FindVariable(std::size_t hashCode) const {
 	}
 	return BuiltInFunction::GetInstance()->FindVariable(hashCode);
 }
-std::shared_ptr<Variable> Space::FindVariableFromTop(std::size_t hashCode) const {
+std::shared_ptr<Variable> Space::GetVariableInSelf(std::size_t hashCode) const {
 	auto ite = _variables.find(hashCode);
 	if (ite != _variables.end()) {
 		return ite->second;
@@ -93,8 +82,8 @@ std::shared_ptr<Variable> Space::FindVariable(const std::string& name) const {
 	return FindVariable(HashFunction::String(name));
 }
 
-std::shared_ptr<Variable> Space::FindVariableFromTop(const std::string& name) const {
-	return FindVariableFromTop(HashFunction::String(name));
+std::shared_ptr<Variable> Space::GetVariableInSelf(const std::string& name) const {
+	return GetVariableInSelf(HashFunction::String(name));
 }
 
 std::shared_ptr<Value> Space::FindVariableValue(const std::string& name) const {

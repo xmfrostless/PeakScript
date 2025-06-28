@@ -1,3 +1,6 @@
+echo "> =========================================";
+echo "sentence_expression_array.peak";
+echo "========================================= <";
 
 var a = [1, false, "C"];
 echo a;

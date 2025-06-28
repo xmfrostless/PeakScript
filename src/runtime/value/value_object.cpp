@@ -9,10 +9,8 @@ ValueObject::ValueObject(std::shared_ptr<Module> module) {
 	_space = module->GetSpace();
 }
 
-ValueObject::ValueObject(std::shared_ptr<Space> indexSpace, std::shared_ptr<ValueObject> parent) {
+ValueObject::ValueObject(std::shared_ptr<Space> indexSpace) {
 	_space = std::make_shared<Space>(SpaceType::Object, indexSpace);
-	auto parentSpace = parent ? parent->GetSpace()->CopySpace() : nullptr;
-	_space->SetParent(parentSpace);
 }
 
 std::shared_ptr<Value> ValueObject::Clone() const {
