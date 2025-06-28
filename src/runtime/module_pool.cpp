@@ -48,7 +48,7 @@ std::shared_ptr<Module> ModulePool::UseModule(const std::string& moduleName) {
 			} else {
 				auto executer = Executer::Create(src);
 				if (executer) {
-					retModule = std::make_shared<Module>(executer);
+					retModule = std::make_shared<Module>(std::move(executer));
 					_modulesMap.emplace(absPath, retModule);
 					saveKey = std::move(absPath);
 				}

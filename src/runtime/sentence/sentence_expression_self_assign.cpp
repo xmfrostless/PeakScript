@@ -15,7 +15,7 @@ ExecuteResult SentenceExpressionSelfAssign::Execute(std::shared_ptr<Space> space
 		return ExecuteResult::Failed;
 	}
 
-	auto temp = std::static_pointer_cast<SentenceExpressionVariable>(_left);
+	auto temp = static_cast<SentenceExpressionVariable*>(_left.get());
 	auto variable = temp->GetVariable();
 	if (!variable) {
 		ErrorLogger::LogRuntimeError(ErrorRuntimeCode::SelfAssign, "The [self-assign-expression] execute failed!");

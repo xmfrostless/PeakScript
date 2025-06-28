@@ -1,0 +1,15 @@
+
+function a() {
+}
+
+function b() {
+    return;
+}
+
+function c() {
+    return true;
+}
+
+echo a();
+echo b();
+echo c();

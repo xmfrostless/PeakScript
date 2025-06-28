@@ -12,4 +12,4 @@
 **/._*
 
 bin/
-build/
+build*/

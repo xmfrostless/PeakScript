@@ -4,8 +4,8 @@
 
 using namespace peak;
 
-SentenceExpressionFunctionCall::SentenceExpressionFunctionCall(const std::string& name, const std::vector<std::shared_ptr<SentenceExpression>>& args)
-	: _name(name), _args(args) {
+SentenceExpressionFunctionCall::SentenceExpressionFunctionCall(const std::string& name, std::vector<std::unique_ptr<SentenceExpression>> args)
+	: _name(name), _args(std::move(args)) {
 }
 
 ExecuteResult SentenceExpressionFunctionCall::ExecuteFromInside(std::shared_ptr<Space> objSpace, std::shared_ptr<Space> space) {
@@ -22,7 +22,7 @@ ExecuteResult SentenceExpressionFunctionCall::ExecuteFromInside(std::shared_ptr<
 		return ExecuteResult::Failed;
 	}
 	std::vector<std::shared_ptr<Value>> args;
-	for (auto expression : _args) {
+	for (auto& expression : _args) {
 		if (!expression || !IsSuccess(expression->Execute(space))) {
 			ErrorLogger::LogRuntimeError(_name);
 			ErrorLogger::LogRuntimeError(ErrorRuntimeCode::FunctionCall, "The parameters of function \"" + _name + "\" execute failed!");

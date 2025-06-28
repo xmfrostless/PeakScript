@@ -12,15 +12,16 @@ namespace peak {
 class SentenceExpression;
 
 class SentenceForeach : public SentenceReturn {
+	MAKE_NON_COPYABLE(SentenceForeach);
 public:
-	SentenceForeach(const std::string& name, const std::string& indexParam, std::shared_ptr<SentenceExpression> expression, std::shared_ptr<Sentence> sentence);
+	SentenceForeach(const std::string& name, const std::string& indexParam, std::unique_ptr<SentenceExpression> expression, std::unique_ptr<Sentence> sentence);
 	virtual ExecuteResult Execute(std::shared_ptr<Space> space);
 
 private:
 	std::string _name;
 	std::string _indexParam;
-	std::shared_ptr<SentenceExpression> _expression{nullptr};
-	std::shared_ptr<Sentence> _sentence{nullptr};
+	std::unique_ptr<SentenceExpression> _expression{nullptr};
+	std::unique_ptr<Sentence> _sentence{nullptr};
 };
 
 } // namespace peak

@@ -13,6 +13,7 @@ namespace peak {
 class IValueCalculate;
 
 class SentenceExpressionSelfAssign : public SentenceExpressionMath {
+	MAKE_NON_COPYABLE(SentenceExpressionSelfAssign);
 public:
 	using SentenceExpressionMath::SentenceExpressionMath;
 	SentenceExpressionSelfAssign() = delete;

@@ -1,0 +1,14 @@
+var str = "block 3";
+{
+    var str = "block 2";
+    {
+        var str = "block 1";
+        {
+            var str = "block 0";
+            echo str;
+        }
+        echo str;
+    }
+    echo str;
+}
+echo str;

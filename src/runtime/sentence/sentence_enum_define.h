@@ -13,6 +13,7 @@ namespace peak {
 class ValueNumber;
 	
 class SentenceEnumDefine : public Sentence {
+	MAKE_NON_COPYABLE(SentenceEnumDefine);
 public:
 	SentenceEnumDefine(const std::string& name, const std::list<std::pair<std::string, std::shared_ptr<ValueNumber>>>& valueList);
 	virtual ExecuteResult Execute(std::shared_ptr<Space> space);

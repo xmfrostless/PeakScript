@@ -5,8 +5,8 @@
 
 using namespace peak;
 
-SentenceEcho::SentenceEcho(std::shared_ptr<SentenceExpression> expression)
-	: _expression(expression) {
+SentenceEcho::SentenceEcho(std::unique_ptr<SentenceExpression> expression)
+	: _expression(std::move(expression)) {
 }
 
 ExecuteResult SentenceEcho::Execute(std::shared_ptr<Space> space) {

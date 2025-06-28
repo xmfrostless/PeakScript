@@ -4,8 +4,8 @@
 
 using namespace peak;
 
-SentenceCondition::SentenceCondition(std::shared_ptr<SentenceExpression> expression, std::shared_ptr<Sentence> sentenceTrue, std::shared_ptr<Sentence> sentenceFalse)
-	: _expression(expression), _sentenceTrue(sentenceTrue), _sentenceFalse(sentenceFalse) {
+SentenceCondition::SentenceCondition(std::unique_ptr<SentenceExpression> expression, std::unique_ptr<Sentence> sentenceTrue, std::unique_ptr<Sentence> sentenceFalse)
+	: _expression(std::move(expression)), _sentenceTrue(std::move(sentenceTrue)), _sentenceFalse(std::move(sentenceFalse)) {
 }
 
 ExecuteResult SentenceCondition::Execute(std::shared_ptr<Space> space) {
@@ -14,7 +14,7 @@ ExecuteResult SentenceCondition::Execute(std::shared_ptr<Space> space) {
 		return ExecuteResult::Failed;
 	}
 	bool bTrue = ValueTool::ToLogic(_expression->GetValue().get());
-	auto tempSentence = bTrue ? _sentenceTrue : _sentenceFalse;
+	auto& tempSentence = bTrue ? _sentenceTrue : _sentenceFalse;
 	if (tempSentence) {
 		auto tempSpace = std::make_shared<Space>(SpaceType::Condition, space);
 		auto executeRet = tempSentence->Execute(tempSpace);
@@ -23,7 +23,7 @@ ExecuteResult SentenceCondition::Execute(std::shared_ptr<Space> space) {
 			return ExecuteResult::Failed;
 		}
 		if (executeRet == ExecuteResult::Return) {
-			SetReturnValue(std::static_pointer_cast<SentenceReturn>(tempSentence)->GetReturnValue());
+			SetReturnValue(static_cast<SentenceReturn*>(tempSentence.get())->GetReturnValue());
 			return ExecuteResult::Return;
 		}
 		if (executeRet == ExecuteResult::Continue) {

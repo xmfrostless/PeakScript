@@ -1,0 +1,20 @@
+
+import algorithm;
+import arrays;
+import console;
+import file;
+import math;
+import random;
+import strings;
+import time;
+import type;
+
+echo algorithm;
+echo arrays;
+echo console;
+echo file;
+echo math;
+echo random;
+echo strings;
+echo time;
+echo type;

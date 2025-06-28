@@ -1,0 +1,12 @@
+
+var num = 2;
+do {
+    echo "do-while (" + num + " > 0)";
+    --num;
+} while num > 0;
+
+set num = 0;
+while num < 3 {
+    echo "while " + num;
+    ++num;
+}

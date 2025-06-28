@@ -5,8 +5,8 @@
 
 using namespace peak;
 
-SentenceForeach::SentenceForeach(const std::string& name, const std::string& indexParam, std::shared_ptr<SentenceExpression> expression, std::shared_ptr<Sentence> sentence)
-	: _name(name), _indexParam(indexParam), _expression(expression), _sentence(sentence) {
+SentenceForeach::SentenceForeach(const std::string& name, const std::string& indexParam, std::unique_ptr<SentenceExpression> expression, std::unique_ptr<Sentence> sentence)
+	: _name(name), _indexParam(indexParam), _expression(std::move(expression)), _sentence(std::move(sentence)) {
 }
 ExecuteResult SentenceForeach::Execute(std::shared_ptr<Space> space) {
 	if (!IsSuccess(_expression->Execute(space))) {
@@ -44,7 +44,7 @@ ExecuteResult SentenceForeach::Execute(std::shared_ptr<Space> space) {
 				break;
 			}
 			if (ret == ExecuteResult::Return) {
-				SetReturnValue(std::static_pointer_cast<SentenceReturn>(_sentence)->GetReturnValue());
+				SetReturnValue(static_cast<SentenceReturn*>(_sentence.get())->GetReturnValue());
 				tempSpace->Clear();
 				return ExecuteResult::Return;
 			}
@@ -71,7 +71,7 @@ ExecuteResult SentenceForeach::Execute(std::shared_ptr<Space> space) {
 				break;
 			}
 			if (ret == ExecuteResult::Return) {
-				SetReturnValue(std::static_pointer_cast<SentenceReturn>(_sentence)->GetReturnValue());
+				SetReturnValue(static_cast<SentenceReturn*>(_sentence.get())->GetReturnValue());
 				tempSpace->Clear();
 				return ExecuteResult::Return;
 			}

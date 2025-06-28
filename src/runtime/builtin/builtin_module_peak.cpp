@@ -23,8 +23,7 @@ std::shared_ptr<Module> BuiltModulePeak::CreateModule() {
             return nullptr;
         }
         const auto& text = std::static_pointer_cast<ValueString>(args[0])->GetValue();
-        static auto script = Script::Load("");
-        return script->ExecuteExpression(text);
+        return Script::Load("")->ExecuteExpression(text);
     });
 
     _InsertFunction(space, "execute", 1, [](const std::vector<std::shared_ptr<Value>>& args, std::shared_ptr<Space>) -> std::shared_ptr<Value> {

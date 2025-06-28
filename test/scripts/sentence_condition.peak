@@ -1,0 +1,14 @@
+
+function test(num) {
+    if num == 1 {
+        echo "if" + num;
+    } else if num == 2 {
+        echo "else if" + num;
+    } else {
+        echo "else" + num;
+    }
+}
+
+test(1);
+test(2);
+test(3);

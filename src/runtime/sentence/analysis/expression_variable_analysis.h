@@ -19,6 +19,7 @@ public:
 };
 
 class ExpressionVariableAnalysisName: public IExpressionVariableAnalysis {
+	MAKE_NON_COPYABLE(ExpressionVariableAnalysisName);
 public:
 	ExpressionVariableAnalysisName(const std::string& name);
 	virtual std::shared_ptr<Variable> Execute(std::shared_ptr<Space> space);
@@ -29,23 +30,25 @@ private:
 };
 
 class ExpressionVariableAnalysisArrayItem: public IExpressionVariableAnalysis {
+	MAKE_NON_COPYABLE(ExpressionVariableAnalysisArrayItem);
 public:
-	ExpressionVariableAnalysisArrayItem(std::shared_ptr<SentenceExpression> valueExpression, std::vector<std::shared_ptr<SentenceExpression>> indexExpressionVec);
+	ExpressionVariableAnalysisArrayItem(std::unique_ptr<SentenceExpression> valueExpression, std::vector<std::unique_ptr<SentenceExpression>> indexExpressionVec);
 	virtual std::shared_ptr<Variable> Execute(std::shared_ptr<Space> space);
 
 private:
-	std::shared_ptr<SentenceExpression> _valueExpression { nullptr };
-	std::vector<std::shared_ptr<SentenceExpression>> _indexExpressionVec { nullptr };
+	std::unique_ptr<SentenceExpression> _valueExpression { nullptr };
+	std::vector<std::unique_ptr<SentenceExpression>> _indexExpressionVec;
 };
 
 class ExpressionVariableAnalysisInside: public IExpressionVariableAnalysis {
+	MAKE_NON_COPYABLE(ExpressionVariableAnalysisInside);
 public:
-	ExpressionVariableAnalysisInside(std::shared_ptr<SentenceExpression> header, std::vector<std::shared_ptr<SentenceExpression>> insides);
+	ExpressionVariableAnalysisInside(std::unique_ptr<SentenceExpression> header, std::vector<std::unique_ptr<SentenceExpression>> insides);
 	virtual std::shared_ptr<Variable> Execute(std::shared_ptr<Space> space);
 
 private:
-	std::shared_ptr<SentenceExpression> _header { nullptr };
-	std::vector<std::shared_ptr<SentenceExpression>> _insides { nullptr };
+	std::unique_ptr<SentenceExpression> _header { nullptr };
+	std::vector<std::unique_ptr<SentenceExpression>> _insides;
 };
 
 } // namespace peak

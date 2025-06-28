@@ -11,14 +11,15 @@ namespace peak {
 
 class SentenceExpression;
 class SentenceCondition : public SentenceReturn {
+	MAKE_NON_COPYABLE(SentenceCondition);
 public:
-	SentenceCondition(std::shared_ptr<SentenceExpression> expression, std::shared_ptr<Sentence> sentenceTrue, std::shared_ptr<Sentence> sentenceFalse);
+	SentenceCondition(std::unique_ptr<SentenceExpression> expression, std::unique_ptr<Sentence> sentenceTrue, std::unique_ptr<Sentence> sentenceFalse);
 	virtual ExecuteResult Execute(std::shared_ptr<Space> space);
 
 private:
-	std::shared_ptr<SentenceExpression> _expression{nullptr};
-	std::shared_ptr<Sentence> _sentenceTrue{nullptr};
-	std::shared_ptr<Sentence> _sentenceFalse{nullptr};
+	std::unique_ptr<SentenceExpression> _expression{nullptr};
+	std::unique_ptr<Sentence> _sentenceTrue{nullptr};
+	std::unique_ptr<Sentence> _sentenceFalse{nullptr};
 };
 
 } // namespace peak

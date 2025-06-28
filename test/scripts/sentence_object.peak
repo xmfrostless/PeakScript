@@ -1,0 +1,17 @@
+
+object Abc {
+    var x;
+    var y = 0;
+}
+
+echo Abc;
+
+var a = new Abc;
+a.x = true;
+echo a;
+echo Abc.x;
+
+object Child : Abc {
+    var z = 100;
+}
+echo Child;

@@ -7,7 +7,7 @@
 
 #include "runtime/space.h"
 
-namespace peak { 
+namespace peak {
 
 class Value;
 
@@ -19,14 +19,13 @@ enum class ExecuteResult {
 	Break,
 };
 class Sentence {
+	MAKE_NON_COPYABLE(Sentence);
 public:
-	Sentence() {}
-	virtual ~Sentence() {}
+	Sentence() = default;
+	virtual ~Sentence() = default;
 	virtual ExecuteResult Execute(std::shared_ptr<Space> space) = 0;
 
-	static bool IsSuccess(ExecuteResult value) {
-		return value != ExecuteResult::Failed;
-	}
+	static bool IsSuccess(ExecuteResult value);
 };
 
 } // namespace peak

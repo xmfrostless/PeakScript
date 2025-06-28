@@ -5,8 +5,8 @@
 
 using namespace peak;
 
-SentenceExpressionInside::SentenceExpressionInside(std::shared_ptr<SentenceExpression> header, std::vector<std::shared_ptr<SentenceExpression>> insides)
-	: _header(header), _insides(insides) {
+SentenceExpressionInside::SentenceExpressionInside(std::unique_ptr<SentenceExpression> header, std::vector<std::unique_ptr<SentenceExpression>> insides)
+	: _header(std::move(header)), _insides(std::move(insides)) {
 }
 ExecuteResult SentenceExpressionInside::Execute(std::shared_ptr<Space> space) {
 	if (!Sentence::IsSuccess(_header->Execute(space))) {
@@ -19,7 +19,7 @@ ExecuteResult SentenceExpressionInside::Execute(std::shared_ptr<Space> space) {
 		return ExecuteResult::Failed;
 	}
 	auto tempValue = headerValue;
-	for (auto expression : _insides) {
+	for (auto& expression : _insides) {
 		if (!ValueTool::IsObject(tempValue.get())) {
 			ErrorLogger::LogRuntimeError(ErrorRuntimeCode::Inside, "The expression isn't a object!");
 			return ExecuteResult::Failed;
@@ -28,7 +28,7 @@ ExecuteResult SentenceExpressionInside::Execute(std::shared_ptr<Space> space) {
 		auto expType = expression->GetExpressionType();
 		auto executeRet = ExecuteResult::Failed;
 		if (expType == ExpressionType::Function) {
-			executeRet = std::static_pointer_cast<SentenceExpressionFunctionCall>(expression)->ExecuteFromInside(objSpace, space);
+			executeRet = static_cast<SentenceExpressionFunctionCall*>(expression.get())->ExecuteFromInside(objSpace, space);
 		} else {
 			executeRet = expression->Execute(objSpace);
 		}

@@ -3,10 +3,10 @@
 
 using namespace peak;
 
-SentenceExpressionMath::SentenceExpressionMath(std::shared_ptr<SentenceExpression> left,
-											   std::shared_ptr<SentenceExpression> right,
+SentenceExpressionMath::SentenceExpressionMath(std::unique_ptr<SentenceExpression> left,
+											   std::unique_ptr<SentenceExpression> right,
 											   IValueCalculate* calculate)
-	: _left(left), _right(right), _calculate(calculate) {
+	: _left(std::move(left)), _right(std::move(right)), _calculate(calculate) {
 }
 
 ExecuteResult SentenceExpressionMath::Execute(std::shared_ptr<Space> space) {

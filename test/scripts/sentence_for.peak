@@ -1,0 +1,12 @@
+
+for var i = 0; i < 3; ++i {
+    echo i;
+}
+
+var num = [1, 2, 3];
+for item in num {
+    echo item;
+}
+for item, i in num {
+    echo i;
+}

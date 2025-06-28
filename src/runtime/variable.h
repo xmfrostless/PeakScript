@@ -7,7 +7,7 @@
 
 #include "base/error_logger.h"
 
-namespace peak { 
+namespace peak {
 
 class Value;
 
@@ -29,7 +29,7 @@ public:
 
 private:
 	std::string _name;
-	VariableAttribute _attribute{VariableAttribute::None};
-	std::shared_ptr<Value> _value{nullptr};
+	std::shared_ptr<Value> _value { nullptr };
+	VariableAttribute _attribute { VariableAttribute::None };
 };
 } // namespace peak

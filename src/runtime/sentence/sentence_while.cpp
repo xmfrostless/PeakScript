@@ -4,8 +4,8 @@
 
 using namespace peak;
 
-SentenceWhile::SentenceWhile(std::shared_ptr<SentenceExpression> expression, std::shared_ptr<Sentence> sentence)
-	: _expression(expression), _sentence(sentence) {
+SentenceWhile::SentenceWhile(std::unique_ptr<SentenceExpression> expression, std::unique_ptr<Sentence> sentence)
+	: _expression(std::move(expression)), _sentence(std::move(sentence)) {
 }
 ExecuteResult SentenceWhile::Execute(std::shared_ptr<Space> space) {
 	if (_sentence) {
@@ -28,7 +28,7 @@ ExecuteResult SentenceWhile::Execute(std::shared_ptr<Space> space) {
 				break;
 			}
 			if (ret == ExecuteResult::Return) {
-				SetReturnValue(std::static_pointer_cast<SentenceReturn>(_sentence)->GetReturnValue());
+				SetReturnValue(static_cast<SentenceReturn*>(_sentence.get())->GetReturnValue());
 				tempSpace->Clear();
 				return ExecuteResult::Return;
 			}

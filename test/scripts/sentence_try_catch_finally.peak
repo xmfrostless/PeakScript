@@ -1,0 +1,10 @@
+
+try {
+    echo "try";
+    var p = 0;
+    var p = 1;
+} catch {
+    echo "catch";
+} finally {
+    echo "finally";
+}

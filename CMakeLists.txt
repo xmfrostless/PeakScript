@@ -10,7 +10,7 @@ set(CMAKE_CONFIGURATION_TYPES Debug Release)
 
 # 编译选项
 if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-	add_compile_options("/Wall" "/wd5045" "/wd4711" "/wd4710" "/wd4820" "/wd4514")
+	add_compile_options("/Wall" "/wd5045" "/wd4711" "/wd4710" "/wd4820")
 	add_compile_options("/EHsc" "/permissive-")
 	add_compile_options("/MP" "/Zc:__cplusplus" "/Zc:preprocessor")
 	add_compile_options("/source-charset:utf-8")
@@ -52,4 +52,3 @@ file(GLOB_RECURSE REMOVE_TEST_SOURCES "./test/._*")
 list(REMOVE_ITEM TEST_SOURCES ${REMOVE_TEST_SOURCES})
 add_executable("test" ${TEST_SOURCES})
 target_link_libraries("test" ${PeakScript})
-

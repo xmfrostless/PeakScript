@@ -12,12 +12,13 @@ namespace peak {
 class Value;
 
 class SentenceExpressionValueArray : public SentenceExpression {
+	MAKE_NON_COPYABLE(SentenceExpressionValueArray);
 public:
-	SentenceExpressionValueArray(const std::vector<std::shared_ptr<SentenceExpression>>& valueExpressionArray);
+	SentenceExpressionValueArray(std::vector<std::unique_ptr<SentenceExpression>> valueExpressionArray);
 	virtual ExecuteResult Execute(std::shared_ptr<Space> space);
 
 private:
-	std::vector<std::shared_ptr<SentenceExpression>> _expressionArray;
+	std::vector<std::unique_ptr<SentenceExpression>> _expressionArray;
 };
 
 } // namespace peak

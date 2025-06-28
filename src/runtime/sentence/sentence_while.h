@@ -7,17 +7,18 @@
 
 #include "sentence_return.h"
 
-namespace peak { 
+namespace peak {
 
 class SentenceExpression;
 class SentenceWhile : public SentenceReturn {
+	MAKE_NON_COPYABLE(SentenceWhile);
 public:
-	SentenceWhile(std::shared_ptr<SentenceExpression> expression, std::shared_ptr<Sentence> sentence);
+	SentenceWhile(std::unique_ptr<SentenceExpression> expression, std::unique_ptr<Sentence> sentence);
 	virtual ExecuteResult Execute(std::shared_ptr<Space> space);
 
 private:
-	std::shared_ptr<SentenceExpression> _expression{nullptr};
-	std::shared_ptr<Sentence> _sentence{nullptr};
+	std::unique_ptr<SentenceExpression> _expression{nullptr};
+	std::unique_ptr<Sentence> _sentence{nullptr};
 };
 
 } // namespace peak

@@ -6,6 +6,7 @@
 #pragma once
 
 #include "base/error_logger.h"
+#include "value/value_tool.h"
 
 namespace peak {
 

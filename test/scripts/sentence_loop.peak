@@ -1,0 +1,8 @@
+
+loop 3 {
+    echo "yes";
+}
+
+loop i in 3 {
+    echo i;
+}

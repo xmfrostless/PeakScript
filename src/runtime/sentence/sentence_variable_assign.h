@@ -12,13 +12,14 @@ namespace peak {
 class SentenceExpression;
 
 class SentenceVariableAssign : public Sentence {
+	MAKE_NON_COPYABLE(SentenceVariableAssign);
 public:
-	SentenceVariableAssign(std::shared_ptr<SentenceExpression> variableExpression, std::shared_ptr<SentenceExpression> expression);
+	SentenceVariableAssign(std::unique_ptr<SentenceExpression> variableExpression, std::unique_ptr<SentenceExpression> expression);
 	virtual ExecuteResult Execute(std::shared_ptr<Space> space);
 
 private:
-	std::shared_ptr<SentenceExpression> _variableExpression{nullptr};
-	std::shared_ptr<SentenceExpression> _expression{nullptr};
+	std::unique_ptr<SentenceExpression> _variableExpression{nullptr};
+	std::unique_ptr<SentenceExpression> _expression{nullptr};
 };
 
 } // namespace peak

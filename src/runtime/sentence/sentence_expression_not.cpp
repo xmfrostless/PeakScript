@@ -3,8 +3,8 @@
 
 using namespace peak;
 
-SentenceExpressionNot::SentenceExpressionNot(std::shared_ptr<SentenceExpression> expression)
-	: _expression(expression) {
+SentenceExpressionNot::SentenceExpressionNot(std::unique_ptr<SentenceExpression> expression)
+	: _expression(std::move(expression)) {
 }
 ExecuteResult SentenceExpressionNot::Execute(std::shared_ptr<Space> space) {
 	if (!IsSuccess(_expression->Execute(space))) {

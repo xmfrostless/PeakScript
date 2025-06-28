@@ -6,8 +6,8 @@
 
 using namespace peak;
 
-SentenceVariableAssign::SentenceVariableAssign(std::shared_ptr<SentenceExpression> variableExpression, std::shared_ptr<SentenceExpression> expression)
-	: _variableExpression(variableExpression), _expression(expression) {
+SentenceVariableAssign::SentenceVariableAssign(std::unique_ptr<SentenceExpression> variableExpression, std::unique_ptr<SentenceExpression> expression)
+	: _variableExpression(std::move(variableExpression)), _expression(std::move(expression)) {
 }
 
 ExecuteResult SentenceVariableAssign::Execute(std::shared_ptr<Space> space) {
@@ -19,7 +19,7 @@ ExecuteResult SentenceVariableAssign::Execute(std::shared_ptr<Space> space) {
 		ErrorLogger::LogRuntimeError(ErrorRuntimeCode::VariableAssign, "The expression execute failed!");
 		return ExecuteResult::Failed;
 	}
-	auto variable = std::static_pointer_cast<SentenceExpressionVariable>(_variableExpression)->GetVariable();
+	auto variable = static_cast<SentenceExpressionVariable*>(_variableExpression.get())->GetVariable();
 	if (!IsSuccess(_expression->Execute(space))) {
 		ErrorLogger::LogRuntimeError(ErrorRuntimeCode::VariableAssign, "The expression execute failed!");
 		return ExecuteResult::Failed;

@@ -21,8 +21,8 @@ void ExpressionVariableAnalysisName::SetName(const std::string& name) {
 	_name = name;
 }
 
-ExpressionVariableAnalysisArrayItem::ExpressionVariableAnalysisArrayItem(std::shared_ptr<SentenceExpression> valueExpression, std::vector<std::shared_ptr<SentenceExpression>> indexExpressionVec)
-	: _valueExpression(valueExpression), _indexExpressionVec(indexExpressionVec) {
+ExpressionVariableAnalysisArrayItem::ExpressionVariableAnalysisArrayItem(std::unique_ptr<SentenceExpression> valueExpression, std::vector<std::unique_ptr<SentenceExpression>> indexExpressionVec)
+	: _valueExpression(std::move(valueExpression)), _indexExpressionVec(std::move(indexExpressionVec)) {
 }
 
 std::shared_ptr<Variable> ExpressionVariableAnalysisArrayItem::Execute(std::shared_ptr<Space> space) {
@@ -37,7 +37,7 @@ std::shared_ptr<Variable> ExpressionVariableAnalysisArrayItem::Execute(std::shar
 	for (auto i = 0u; i < expressionVecSize; ++i) {
 		if (ValueTool::IsArray(retValue.get())) {
 			auto& arr = std::static_pointer_cast<ValueArray>(retValue)->GetArray();
-			auto expression = _indexExpressionVec[i];
+			auto& expression = _indexExpressionVec[i];
 			if (!Sentence::IsSuccess(expression->Execute(space))) {
 				ErrorLogger::LogRuntimeError(ErrorRuntimeCode::VariableArrayItemAnalysis, "The expression execute failed!");
 				return nullptr;
@@ -60,7 +60,7 @@ std::shared_ptr<Variable> ExpressionVariableAnalysisArrayItem::Execute(std::shar
 			retValue = retVariable->GetValue();
 		} else if (ValueTool::IsString(retValue.get())) {
 			auto& str = std::static_pointer_cast<ValueString>(retValue)->GetValue();
-			auto expression = _indexExpressionVec[i];
+			auto& expression = _indexExpressionVec[i];
 			if (!Sentence::IsSuccess(expression->Execute(space))) {
 				ErrorLogger::LogRuntimeError(ErrorRuntimeCode::VariableArrayItemAnalysis, "The expression execute failed!");
 				return nullptr;
@@ -87,8 +87,8 @@ std::shared_ptr<Variable> ExpressionVariableAnalysisArrayItem::Execute(std::shar
 	return retVariable;
 }
 
-ExpressionVariableAnalysisInside::ExpressionVariableAnalysisInside(std::shared_ptr<SentenceExpression> header, std::vector<std::shared_ptr<SentenceExpression>> insides)
-	: _header(header), _insides(insides) {
+ExpressionVariableAnalysisInside::ExpressionVariableAnalysisInside(std::unique_ptr<SentenceExpression> header, std::vector<std::unique_ptr<SentenceExpression>> insides)
+	: _header(std::move(header)), _insides(std::move(insides)) {
 }
 std::shared_ptr<Variable> ExpressionVariableAnalysisInside::Execute(std::shared_ptr<Space> space) {
 	if (!Sentence::IsSuccess(_header->Execute(space))) {
@@ -102,7 +102,7 @@ std::shared_ptr<Variable> ExpressionVariableAnalysisInside::Execute(std::shared_
 	}
 	auto tempValue = headerValue;
 	std::shared_ptr<Variable> retVariable { nullptr };
-	for (auto expression : _insides) {
+	for (auto& expression : _insides) {
 		if (!ValueTool::IsObject(tempValue.get())) {
 			ErrorLogger::LogRuntimeError(ErrorRuntimeCode::VariableInsideAnalysis, "The expression isn't a object!");
 			return nullptr;
@@ -111,7 +111,7 @@ std::shared_ptr<Variable> ExpressionVariableAnalysisInside::Execute(std::shared_
 		auto expressionType = expression->GetExpressionType();
 		auto executeRet = ExecuteResult::Failed;
 		if (expressionType == ExpressionType::Function) {
-			executeRet = std::static_pointer_cast<SentenceExpressionFunctionCall>(expression)->ExecuteFromInside(objSpace, space);
+			executeRet = static_cast<SentenceExpressionFunctionCall*>(expression.get())->ExecuteFromInside(objSpace, space);
 			if (!Sentence::IsSuccess(executeRet)) {
 				ErrorLogger::LogRuntimeError(ErrorRuntimeCode::VariableInsideAnalysis, "The inside expression execute failed!");
 				return nullptr;
@@ -123,7 +123,7 @@ std::shared_ptr<Variable> ExpressionVariableAnalysisInside::Execute(std::shared_
 				ErrorLogger::LogRuntimeError(ErrorRuntimeCode::VariableInsideAnalysis, "The inside expression execute failed!");
 				return nullptr;
 			}
-			retVariable = std::static_pointer_cast<SentenceExpressionVariable>(expression)->GetVariable();
+			retVariable = static_cast<SentenceExpressionVariable*>(expression.get())->GetVariable();
 		} else {
 			ErrorLogger::LogRuntimeError(ErrorRuntimeCode::VariableInsideAnalysis, "The inside expression can't return a variable!");
 			return nullptr;

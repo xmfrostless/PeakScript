@@ -12,14 +12,15 @@ namespace peak {
 class IValueCalculate;
 
 class SentenceExpressionMath : public SentenceExpression {
+	MAKE_NON_COPYABLE(SentenceExpressionMath);
 public:
-	SentenceExpressionMath(std::shared_ptr<SentenceExpression> left, std::shared_ptr<SentenceExpression> right, IValueCalculate* calculate);
+	SentenceExpressionMath(std::unique_ptr<SentenceExpression> left, std::unique_ptr<SentenceExpression> right, IValueCalculate* calculate);
 	virtual ExecuteResult Execute(std::shared_ptr<Space> space);
 	virtual ExpressionType GetExpressionType() const { return ExpressionType::Math; }
 
 protected:
-	std::shared_ptr<SentenceExpression> _left{nullptr};
-	std::shared_ptr<SentenceExpression> _right{nullptr};
+	std::unique_ptr<SentenceExpression> _left{nullptr};
+	std::unique_ptr<SentenceExpression> _right{nullptr};
 	IValueCalculate* _calculate{nullptr};
 };
 

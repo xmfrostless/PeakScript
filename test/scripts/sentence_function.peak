@@ -1,0 +1,11 @@
+
+function f1() {
+    echo "f1";
+}
+
+function f2(a) {
+    echo a;
+}
+
+f1();
+f2(true);

@@ -3,8 +3,8 @@
 
 using namespace peak;
 
-Module::Module(std::shared_ptr<Executer> executer)
-	: _executer(executer) {
+Module::Module(std::unique_ptr<Executer> executer)
+	: _executer(std::move(executer)) {
 	_space = _executer->GetSpace();
 }
 Module::Module(std::shared_ptr<Space> space)

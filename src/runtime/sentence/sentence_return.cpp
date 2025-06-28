@@ -1,11 +1,10 @@
 #include "sentence_return.h"
-#include "sentence_expression.h"
 #include "runtime/value/value_tool.h"
 
 using namespace peak;
 
-SentenceReturn::SentenceReturn(std::shared_ptr<SentenceExpression> expression)
-	: _returnExpression(expression) {
+SentenceReturn::SentenceReturn(std::unique_ptr<SentenceExpression> expression)
+	: _returnExpression(std::move(expression)) {
 }
 ExecuteResult SentenceReturn::Execute(std::shared_ptr<Space> space) {
 	if (_returnExpression) {

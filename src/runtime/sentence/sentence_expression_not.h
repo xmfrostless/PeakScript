@@ -11,13 +11,14 @@ namespace peak {
 
 
 class SentenceExpressionNot : public SentenceExpression {
+	MAKE_NON_COPYABLE(SentenceExpressionNot);
 public:
-	SentenceExpressionNot(std::shared_ptr<SentenceExpression> expression);
+	SentenceExpressionNot(std::unique_ptr<SentenceExpression> expression);
 	virtual ExpressionType GetExpressionType() const { return ExpressionType::Not; }
 	virtual ExecuteResult Execute(std::shared_ptr<Space> space);
 
 private:
-	std::shared_ptr<SentenceExpression> _expression{nullptr};
+	std::unique_ptr<SentenceExpression> _expression{nullptr};
 };
 
 

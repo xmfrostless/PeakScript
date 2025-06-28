@@ -1,18 +1,25 @@
 #include <iostream>
 #include <peak.h>
 
-int main(int argc, char** argv) {
-	peak::System::AddSearchSrcDir(std::filesystem::path(argv[0]).parent_path().string());
+void add_search_path(const std::filesystem::path& path) {
+	std::cout << path << std::endl;
+	peak::System::AddSearchSrcDir(path.string());
+	peak::System::AddSearchSrcDir((path / "test/scripts").string());
+	peak::System::AddSearchSrcDir((path / "scripts").string());
+}
 
-	std::shared_ptr<peak::Script> script { nullptr };
-	if (argc > 1) {
-		script = peak::Script::LoadFile(argv[1]);
-	} else {
-		script = peak::Script::LoadFile("./main.peak");
-	}
+int main(int, char** argv) {
+	auto path = std::filesystem::path(argv[0]);
+	add_search_path(path);
+	add_search_path(path.parent_path());
+	add_search_path(path.parent_path().parent_path());
+	auto script = peak::Script::LoadFile("./test_main.peak");
 	if (script) {
 		script->Execute();
+		std::cout << "\n test over.\n" << std::endl;
+	} else {
+		std::cout << "\nnot found: test_main.peak\n" << std::endl;
 	}
-
+	getchar();
 	return 0;
 }

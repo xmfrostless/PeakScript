@@ -1,22 +1,20 @@
 #include "executer.h"
-#include "grammar/parse.h"
-#include "sentence/sentence.h"
 #include "sentence/sentence_expression.h"
 #include "runtime/value/value_tool.h"
 #include "space.h"
 
 using namespace peak;
 
-std::shared_ptr<Executer> Executer::Create(const std::string& src) {
+std::unique_ptr<Executer> Executer::Create(const std::string& src) {
 	auto parseData = Parse::Load(src);
 	if (!parseData->bSuccess) {
 		return nullptr;
 	}
-	return std::make_shared<Executer>(parseData);
+	return std::make_unique<Executer>(std::move(parseData));
 }
 
-Executer::Executer(std::shared_ptr<ParseData> data)
-	: _parseData(data) {
+Executer::Executer(std::unique_ptr<ParseData> data)
+	: _parseData(std::move(data)) {
 	_space = std::make_shared<Space>(SpaceType::None);
 	_outsideSpace = std::make_shared<Space>(SpaceType::None);
 }
@@ -29,7 +27,7 @@ Executer::~Executer() {
 bool Executer::Execute() {
 	_space->Clear();
 	_space->AddSpaceOfUsing(_outsideSpace);
-	for (auto sentence : _parseData->sentenceList) {
+	for (auto& sentence : _parseData->sentenceList) {
 		if (!Sentence::IsSuccess(sentence->Execute(_space))) {
 			return false;
 		}

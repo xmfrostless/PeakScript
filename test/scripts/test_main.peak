@@ -1,0 +1,22 @@
+
+import "sentence_block.peak";
+import "sentence_condition.peak";
+import "sentence_do_while.peak";
+import "sentence_echo.peak";
+import "sentence_enum_define.peak";
+import "sentence_expression_array.peak";
+import "sentence_expression.peak";
+import "sentence_for.peak";
+import "sentence_function.peak";
+import "sentence_import.peak";
+import "sentence_loop_control.peak";
+import "sentence_loop.peak";
+import "sentence_object.peak";
+import "sentence_return.peak";
+import "sentence_try_catch_finally.peak";
+import "sentence_variable.peak";
+
+import "module.peak";
+
+import "example_sort.peak";
+

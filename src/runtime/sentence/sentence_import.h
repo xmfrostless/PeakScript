@@ -11,6 +11,7 @@ namespace peak {
 
 
 class SentenceImport : public Sentence {
+	MAKE_NON_COPYABLE(SentenceImport);
 public:
 	SentenceImport(const std::string& moduleName, const std::string& alias);
 	virtual ExecuteResult Execute(std::shared_ptr<Space> space);

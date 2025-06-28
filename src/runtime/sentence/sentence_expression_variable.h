@@ -13,6 +13,7 @@ class Variable;
 class IExpressionVariableAnalysis;
 
 class SentenceExpressionVariable : public SentenceExpression {
+	MAKE_NON_COPYABLE(SentenceExpressionVariable);
 public:
 	SentenceExpressionVariable(std::shared_ptr<IExpressionVariableAnalysis> variableAnalysis);
 	virtual ExecuteResult Execute(std::shared_ptr<Space> space);

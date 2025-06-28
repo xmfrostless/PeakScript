@@ -1,5 +1,4 @@
 #include "script.h"
-#include "runtime/executer.h"
 #include "runtime/value/value_tool.h"
 #include "runtime/variable.h"
 #include "runtime/space.h"
@@ -8,17 +7,21 @@
 
 using namespace peak;
 
-std::shared_ptr<Script> Script::Load(const std::string& src) {
+std::unique_ptr<Script> Script::Load(const std::string& src) {
 	auto executer = Executer::Create(src);
 	if (executer) {
-		return std::make_shared<Script>(executer);
+		return std::make_unique<Script>(std::move(executer));
 	}
 	return nullptr;
 }
 
-std::shared_ptr<Script> Script::LoadFile(const std::string& filename) {
+std::unique_ptr<Script> Script::LoadFile(const std::string& filename) {
 	std::string absPath;
-	return Load(System::OpenSrc(filename, absPath));
+	const auto& src = System::OpenSrc(filename, absPath);
+	if (src.empty()) {
+		return nullptr;
+	}
+	return Load(src);
 }
 
 void Script::LocateLogger(std::function<void(const std::string&)> logger) {
@@ -37,8 +40,8 @@ ModulePool* Script::GetModulePool() {
 	return ModulePool::GetInstance();
 }
 
-Script::Script(std::shared_ptr<Executer> executer)
-	: _executer(executer) {
+Script::Script(std::unique_ptr<Executer> executer)
+	: _executer(std::move(executer)) {
 }
 
 bool Script::Execute() {

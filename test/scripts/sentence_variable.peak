@@ -1,0 +1,17 @@
+
+var a;
+a = "a";
+echo a;
+
+var b;
+set b = "b";
+echo b;
+
+var c = "c";
+echo c;
+
+set d = "d";
+echo d;
+
+const e = 99;
+echo e;

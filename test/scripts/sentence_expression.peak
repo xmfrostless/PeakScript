@@ -1,0 +1,37 @@
+
+var num = 0;
+echo ++num;
+echo num++;
+echo num+=1;
+echo num-=1;
+echo num*=1;
+echo num/=1;
+echo num%=1;
+
+function sum(a, b) {
+    return a + b;
+}
+echo sum(1, 2);
+
+object Haha {
+    var a = 3;
+    var b = 4;
+}
+
+echo Haha.a;
+echo sum(Haha.a, Haha.b);
+
+echo (1 + 2) * 3 % 4 / 5 * ((-6 - -7) * (-9 + -10)) + sum(11, -12);
+
+echo true || false;
+echo true && false;
+echo !true;
+echo true == false;
+echo true != false;
+echo 2 > 1;
+echo 2 >= 1;
+echo 2 < 1;
+echo 2 <= 1;
+
+echo [1, 2, 3];
+

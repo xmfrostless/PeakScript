@@ -1,0 +1,11 @@
+
+import "console";
+log("console 0");
+
+import "console" as con;
+con.log("console 1");
+
+import console;
+echo console.log("console 3");
+
+

@@ -1,0 +1,14 @@
+
+var a = [1, false, "C"];
+echo a;
+
+var b = a;
+b[0] = 2;
+echo a;
+echo b;
+
+var c = new a;
+c[0] = true;
+echo a;
+echo b;
+echo c;

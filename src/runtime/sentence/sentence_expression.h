@@ -24,6 +24,7 @@ enum class ExpressionType : char {
 };
 
 class SentenceExpression : public Sentence {
+	MAKE_NON_COPYABLE(SentenceExpression);
 public:
 	SentenceExpression();
 	SentenceExpression(std::shared_ptr<Value> value);

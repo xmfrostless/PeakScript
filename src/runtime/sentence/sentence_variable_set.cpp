@@ -4,8 +4,8 @@
 
 using namespace peak;
 
-SentenceVariableSet::SentenceVariableSet(const std::string& name, std::shared_ptr<SentenceExpression> expression)
-	: _name(name), _expression(expression) {
+SentenceVariableSet::SentenceVariableSet(const std::string& name, std::unique_ptr<SentenceExpression> expression)
+	: _name(name), _expression(std::move(expression)) {
 }
 
 ExecuteResult SentenceVariableSet::Execute(std::shared_ptr<Space> space) {

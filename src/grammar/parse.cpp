@@ -98,8 +98,8 @@ Parse::ExpressionParseList Parse::__sentenceInsideAppendParseList = {
 	_ParseFunctioCall,
 	_ParseVariableName,
 };
-std::shared_ptr<ParseData> Parse::Load(const std::string& src) {
-	auto retData = std::make_shared<ParseData>();
+std::unique_ptr<ParseData> Parse::Load(const std::string& src) {
+	auto retData = std::make_unique<ParseData>();
 	retData->bSuccess = true;
 	std::size_t pos = 0;
 	auto size = src.size();
@@ -114,12 +114,12 @@ std::shared_ptr<ParseData> Parse::Load(const std::string& src) {
 			ErrorLogger::LogParseError(src, size, pos);
 			break;
 		}
-		retData->sentenceList.emplace_back(parseSentence);
+		retData->sentenceList.emplace_back(std::move(parseSentence));
 	}
 	return retData;
 }
 
-std::shared_ptr<SentenceExpression> Parse::LoadExpression(const std::string& src) {
+std::unique_ptr<SentenceExpression> Parse::LoadExpression(const std::string& src) {
 	std::size_t pos;
 	return _ParseExpression(src, src.size(), 0, &pos);
 }
@@ -216,7 +216,7 @@ bool Parse::JumpCommentBlock(const std::string& src, std::size_t size, std::size
 	return false;
 }
 
-std::shared_ptr<Sentence> Parse::ParseSentence(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
+std::unique_ptr<Sentence> Parse::ParseSentence(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
 	for (auto func : _sentenceParseList) {
 		auto parseData = func(src, size, pos, nextPos);
 		if (parseData) {
@@ -226,11 +226,11 @@ std::shared_ptr<Sentence> Parse::ParseSentence(const std::string& src, std::size
 	return nullptr;
 }
 
-std::shared_ptr<SentenceExpression> Parse::_ParseExpression(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
+std::unique_ptr<SentenceExpression> Parse::_ParseExpression(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
 	return _ParseExpressionMath(src, size, pos, nextPos);
 }
 
-std::shared_ptr<SentenceExpression> Parse::_ParseExpressionValue(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
+std::unique_ptr<SentenceExpression> Parse::_ParseExpressionValue(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
 	for (auto func : _sentenceValueParseList) {
 		auto value = func(src, size, pos, nextPos);
 		if (value) {
@@ -240,7 +240,7 @@ std::shared_ptr<SentenceExpression> Parse::_ParseExpressionValue(const std::stri
 	return nullptr;
 }
 
-std::shared_ptr<SentenceExpression> Parse::_ParseVariable(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
+std::unique_ptr<SentenceExpression> Parse::_ParseVariable(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
 	for (auto func : _sentenceVariableParseList) {
 		auto value = func(src, size, pos, nextPos);
 		if (value) {
@@ -250,7 +250,7 @@ std::shared_ptr<SentenceExpression> Parse::_ParseVariable(const std::string& src
 	return nullptr;
 }
 
-std::shared_ptr<SentenceExpression> Parse::__ParseExpressionValueForArrayValue(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
+std::unique_ptr<SentenceExpression> Parse::__ParseExpressionValueForArrayValue(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
 	for (auto func : __sentenceArrayItemParseList) {
 		auto value = func(src, size, pos, nextPos);
 		if (value) {
@@ -260,7 +260,7 @@ std::shared_ptr<SentenceExpression> Parse::__ParseExpressionValueForArrayValue(c
 	return nullptr;
 }
 
-std::shared_ptr<SentenceExpression> Parse::__ParseExpressionInsideHeader(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
+std::unique_ptr<SentenceExpression> Parse::__ParseExpressionInsideHeader(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
 	for (auto func : __sentenceInsideHeaderParseList) {
 		auto value = func(src, size, pos, nextPos);
 		if (value) {
@@ -270,7 +270,7 @@ std::shared_ptr<SentenceExpression> Parse::__ParseExpressionInsideHeader(const s
 	return nullptr;
 }
 
-std::shared_ptr<SentenceExpression> Parse::__ParseExpressionInsideAppend(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
+std::unique_ptr<SentenceExpression> Parse::__ParseExpressionInsideAppend(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
 	for (auto func : __sentenceInsideAppendParseList) {
 		auto value = func(src, size, pos, nextPos);
 		if (value) {
@@ -280,7 +280,7 @@ std::shared_ptr<SentenceExpression> Parse::__ParseExpressionInsideAppend(const s
 	return nullptr;
 }
 
-std::shared_ptr<Sentence> Parse::_ParseImport(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
+std::unique_ptr<Sentence> Parse::_ParseImport(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
 	if (!Syntax::MatchImport(src, size, pos, &pos)) {
 		return nullptr;
 	}
@@ -313,15 +313,15 @@ std::shared_ptr<Sentence> Parse::_ParseImport(const std::string& src, std::size_
 		return nullptr;
 	}
 	*nextPos = pos;
-	return std::make_shared<SentenceImport>(moduleName, alias);
+	return std::make_unique<SentenceImport>(moduleName, alias);
 }
 
-std::shared_ptr<Sentence> Parse::_ParseReturn(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
+std::unique_ptr<Sentence> Parse::_ParseReturn(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
 	if (!Syntax::MatchReturn(src, size, pos, &pos)) {
 		return nullptr;
 	}
 
-	std::shared_ptr<SentenceExpression> expression { nullptr };
+	std::unique_ptr<SentenceExpression> expression { nullptr };
 	if (Jump(src, size, pos, &pos)) {
 		expression = _ParseExpression(src, size, pos, &pos);
 	}
@@ -331,9 +331,9 @@ std::shared_ptr<Sentence> Parse::_ParseReturn(const std::string& src, std::size_
 	}
 
 	*nextPos = pos;
-	return std::make_shared<SentenceReturn>(expression);
+	return std::make_unique<SentenceReturn>(std::move(expression));
 }
-std::shared_ptr<Sentence> Parse::_ParseFunctionDefine(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
+std::unique_ptr<Sentence> Parse::_ParseFunctionDefine(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
 	if (!Syntax::MatchFunction(src, size, pos, &pos)) {
 		return nullptr;
 	}
@@ -368,10 +368,10 @@ std::shared_ptr<Sentence> Parse::_ParseFunctionDefine(const std::string& src, st
 		return nullptr;
 	}
 	*nextPos = pos;
-	return std::make_shared<SentenceFunctionDefine>(name, params, contentSentence);
+	return std::make_unique<SentenceFunctionDefine>(name, params, std::move(contentSentence));
 }
 
-std::shared_ptr<Sentence> Parse::_ParseEnumDefine(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
+std::unique_ptr<Sentence> Parse::_ParseEnumDefine(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
 	if (!Syntax::MatchEnum(src, size, pos, &pos)) {
 		return nullptr;
 	}
@@ -437,10 +437,10 @@ std::shared_ptr<Sentence> Parse::_ParseEnumDefine(const std::string& src, std::s
 		indexValue += 1;
 	}
 	*nextPos = pos;
-	return std::make_shared<SentenceEnumDefine>(name, valueList);
+	return std::make_unique<SentenceEnumDefine>(name, valueList);
 }
 
-std::shared_ptr<Sentence> Parse::_ParseObjectDefine(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
+std::unique_ptr<Sentence> Parse::_ParseObjectDefine(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
 	if (!Syntax::MatchObject(src, size, pos, &pos)) {
 		return nullptr;
 	}
@@ -465,7 +465,7 @@ std::shared_ptr<Sentence> Parse::_ParseObjectDefine(const std::string& src, std:
 		return nullptr;
 	}
 
-	std::list<std::shared_ptr<Sentence>> sentenceList;
+	std::list<std::unique_ptr<Sentence>> sentenceList;
 	while (true) {
 		if (pos >= size) {
 			return nullptr;
@@ -478,13 +478,13 @@ std::shared_ptr<Sentence> Parse::_ParseObjectDefine(const std::string& src, std:
 		if (!sentence) {
 			return nullptr;
 		}
-		sentenceList.emplace_back(sentence);
+		sentenceList.emplace_back(std::move(sentence));
 	}
 	*nextPos = pos;
-	return std::make_shared<SentenceObjectDefine>(name, parentName, sentenceList);
+	return std::make_unique<SentenceObjectDefine>(name, parentName, std::move(sentenceList));
 }
 
-std::shared_ptr<Sentence> Parse::_ParseVariableDefine(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
+std::unique_ptr<Sentence> Parse::_ParseVariableDefine(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
 	bool bConst = Syntax::MatchConst(src, size, pos, &pos);
 	if (bConst && !Jump(src, size, pos, &pos)) {
 		return nullptr;
@@ -516,7 +516,7 @@ std::shared_ptr<Sentence> Parse::_ParseVariableDefine(const std::string& src, st
 		}
 		if (JumpEnd(src, size, pos, &pos)) {
 			*nextPos = pos;
-			return std::make_shared<SentenceVariableDefine>(name, attribute, nullptr);
+			return std::make_unique<SentenceVariableDefine>(name, attribute, nullptr);
 		}
 		return nullptr;
 	}
@@ -531,10 +531,10 @@ std::shared_ptr<Sentence> Parse::_ParseVariableDefine(const std::string& src, st
 	}
 
 	*nextPos = pos;
-	return std::make_shared<SentenceVariableDefine>(name, attribute, expression);
+	return std::make_unique<SentenceVariableDefine>(name, attribute, std::move(expression));
 }
 
-std::shared_ptr<Sentence> Parse::_ParseVariableAssign(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
+std::unique_ptr<Sentence> Parse::_ParseVariableAssign(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
 	auto variableExpression = _ParseVariable(src, size, pos, &pos);
 	if (!variableExpression) {
 		return nullptr;
@@ -553,10 +553,10 @@ std::shared_ptr<Sentence> Parse::_ParseVariableAssign(const std::string& src, st
 		return nullptr;
 	}
 	*nextPos = pos;
-	return std::make_shared<SentenceVariableAssign>(variableExpression, expression);
+	return std::make_unique<SentenceVariableAssign>(std::move(variableExpression), std::move(expression));
 }
 
-std::shared_ptr<Sentence> Parse::_ParseVariableSet(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
+std::unique_ptr<Sentence> Parse::_ParseVariableSet(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
 	if (!Syntax::MatchVariableSet(src, size, pos, &pos)) {
 		return nullptr;
 	}
@@ -578,7 +578,7 @@ std::shared_ptr<Sentence> Parse::_ParseVariableSet(const std::string& src, std::
 			return nullptr;
 		}
 		*nextPos = pos;
-		return std::make_shared<SentenceVariableSet>(name, nullptr);
+		return std::make_unique<SentenceVariableSet>(name, nullptr);
 	}
 
 	Jump(src, size, pos, &pos);
@@ -591,10 +591,10 @@ std::shared_ptr<Sentence> Parse::_ParseVariableSet(const std::string& src, std::
 	}
 
 	*nextPos = pos;
-	return std::make_shared<SentenceVariableSet>(name, expression);
+	return std::make_unique<SentenceVariableSet>(name, std::move(expression));
 }
 
-std::shared_ptr<Sentence> Parse::_ParseExpressionToEnd(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
+std::unique_ptr<Sentence> Parse::_ParseExpressionToEnd(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
 	auto expression = _ParseExpression(src, size, pos, &pos);
 	if (!expression) {
 		return nullptr;
@@ -606,7 +606,7 @@ std::shared_ptr<Sentence> Parse::_ParseExpressionToEnd(const std::string& src, s
 	return expression;
 }
 
-std::shared_ptr<Sentence> Parse::_ParseCondition(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
+std::unique_ptr<Sentence> Parse::_ParseCondition(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
 	if (!Syntax::MatchConditionIf(src, size, pos, &pos)) {
 		return nullptr;
 	}
@@ -631,7 +631,7 @@ std::shared_ptr<Sentence> Parse::_ParseCondition(const std::string& src, std::si
 		return nullptr;
 	}
 
-	std::shared_ptr<Sentence> sentenceElse { nullptr };
+	std::unique_ptr<Sentence> sentenceElse { nullptr };
 
 	Jump(src, size, pos, &pos);
 	if (Syntax::MatchConditionElse(src, size, pos, &pos)) {
@@ -646,10 +646,10 @@ std::shared_ptr<Sentence> Parse::_ParseCondition(const std::string& src, std::si
 	}
 
 	*nextPos = pos;
-	return std::make_shared<SentenceCondition>(expression, sentence, sentenceElse);
+	return std::make_unique<SentenceCondition>(std::move(expression), std::move(sentence), std::move(sentenceElse));
 }
 
-std::shared_ptr<Sentence> Parse::_ParseLoop(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
+std::unique_ptr<Sentence> Parse::_ParseLoop(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
 	if (!Syntax::MatchLoop(src, size, pos, &pos)) {
 		return nullptr;
 	}
@@ -698,10 +698,10 @@ std::shared_ptr<Sentence> Parse::_ParseLoop(const std::string& src, std::size_t 
 		return nullptr;
 	}
 	*nextPos = pos;
-	return std::make_shared<SentenceLoop>(name, condition, sentence);
+	return std::make_unique<SentenceLoop>(name, std::move(condition), std::move(sentence));
 }
 
-std::shared_ptr<Sentence> Parse::_ParseFor(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
+std::unique_ptr<Sentence> Parse::_ParseFor(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
 	if (!Syntax::MatchFor(src, size, pos, &pos)) {
 		return nullptr;
 	}
@@ -742,10 +742,10 @@ std::shared_ptr<Sentence> Parse::_ParseFor(const std::string& src, std::size_t s
 	}
 
 	*nextPos = pos;
-	return std::make_shared<SentenceFor>(sentence0, expression0, expression1, content);
+	return std::make_unique<SentenceFor>(std::move(sentence0), std::move(expression0), std::move(expression1), std::move(content));
 }
 
-std::shared_ptr<Sentence> Parse::_ParseForeach(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
+std::unique_ptr<Sentence> Parse::_ParseForeach(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
 	if (!Syntax::MatchFor(src, size, pos, &pos)) {
 		return nullptr;
 	}
@@ -795,10 +795,10 @@ std::shared_ptr<Sentence> Parse::_ParseForeach(const std::string& src, std::size
 		return nullptr;
 	}
 	*nextPos = pos;
-	return std::make_shared<SentenceForeach>(name, indexParam, expression, sentence);
+	return std::make_unique<SentenceForeach>(name, indexParam, std::move(expression), std::move(sentence));
 }
 
-std::shared_ptr<Sentence> Parse::_ParseWhile(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
+std::unique_ptr<Sentence> Parse::_ParseWhile(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
 	if (!Syntax::MatchWhile(src, size, pos, &pos)) {
 		return nullptr;
 	}
@@ -823,10 +823,10 @@ std::shared_ptr<Sentence> Parse::_ParseWhile(const std::string& src, std::size_t
 		return nullptr;
 	}
 	*nextPos = pos;
-	return std::make_shared<SentenceWhile>(expression, sentence);
+	return std::make_unique<SentenceWhile>(std::move(expression), std::move(sentence));
 }
 
-std::shared_ptr<Sentence> Parse::_ParseDoWhile(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
+std::unique_ptr<Sentence> Parse::_ParseDoWhile(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
 	if (!Syntax::MatchDo(src, size, pos, &pos)) {
 		return nullptr;
 	}
@@ -861,15 +861,15 @@ std::shared_ptr<Sentence> Parse::_ParseDoWhile(const std::string& src, std::size
 		return nullptr;
 	}
 	*nextPos = pos;
-	return std::make_shared<SentenceDoWhile>(expression, sentence);
+	return std::make_unique<SentenceDoWhile>(std::move(expression), std::move(sentence));
 }
 
-std::shared_ptr<Sentence> Parse::_ParseBlock(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
+std::unique_ptr<Sentence> Parse::_ParseBlock(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
 	if (!Syntax::MatchBlockBegin(src, size, pos, &pos)) {
 		return nullptr;
 	}
 
-	auto sentenceBlock = std::make_shared<SentenceBlock>();
+	auto sentenceBlock = std::make_unique<SentenceBlock>();
 	while (true) {
 		if (pos >= size) {
 			return nullptr;
@@ -883,14 +883,14 @@ std::shared_ptr<Sentence> Parse::_ParseBlock(const std::string& src, std::size_t
 		if (!parseSentence) {
 			return nullptr;
 		}
-		sentenceBlock->Push(parseSentence);
+		sentenceBlock->Push(std::move(parseSentence));
 	}
 
 	*nextPos = pos;
 	return sentenceBlock;
 }
 
-std::shared_ptr<Sentence> Parse::_ParseEcho(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
+std::unique_ptr<Sentence> Parse::_ParseEcho(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
 	if (!Syntax::MatchEcho(src, size, pos, &pos)) {
 		return nullptr;
 	}
@@ -908,10 +908,10 @@ std::shared_ptr<Sentence> Parse::_ParseEcho(const std::string& src, std::size_t 
 	}
 
 	*nextPos = pos;
-	return std::make_shared<SentenceEcho>(expression);
+	return std::make_unique<SentenceEcho>(std::move(expression));
 }
 
-std::shared_ptr<Sentence> Parse::_ParseTryCatchFinally(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
+std::unique_ptr<Sentence> Parse::_ParseTryCatchFinally(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
 	if (!Syntax::MatchTry(src, size, pos, &pos)) {
 		return nullptr;
 	}
@@ -940,18 +940,18 @@ std::shared_ptr<Sentence> Parse::_ParseTryCatchFinally(const std::string& src, s
 		}
 	}
 	*nextPos = pos;
-	return std::make_shared<SentenceTryCatchFinally>(sentence, catchSentence, finallySentence);
+	return std::make_unique<SentenceTryCatchFinally>(std::move(sentence), std::move(catchSentence), std::move(finallySentence));
 }
 
-std::shared_ptr<Sentence> Parse::_ParseLoopControl(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
-	std::shared_ptr<Sentence> sentence = nullptr;
+std::unique_ptr<Sentence> Parse::_ParseLoopControl(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
+	std::unique_ptr<Sentence> sentence = nullptr;
 	do {
 		if (Syntax::MatchContinue(src, size, pos, &pos)) {
-			sentence = std::make_shared<SentenceLoopControlContinue>();
+			sentence = std::make_unique<SentenceLoopControlContinue>();
 			break;
 		}
 		if (Syntax::MatchBreak(src, size, pos, &pos)) {
-			sentence = std::make_shared<SentenceLoopControlBreak>();
+			sentence = std::make_unique<SentenceLoopControlBreak>();
 			break;
 		}
 		return nullptr;
@@ -963,49 +963,49 @@ std::shared_ptr<Sentence> Parse::_ParseLoopControl(const std::string& src, std::
 	return sentence;
 }
 
-std::shared_ptr<SentenceExpression> Parse::_ParseString(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
+std::unique_ptr<SentenceExpression> Parse::_ParseString(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
 	std::string temp;
 	if (Syntax::MatchString(src, size, pos, &pos, &temp)) {
 		*nextPos = pos;
-		return std::make_shared<SentenceExpression>(std::make_shared<ValueString>(temp));
+		return std::make_unique<SentenceExpression>(std::make_shared<ValueString>(temp));
 	}
 	return nullptr;
 }
 
-std::shared_ptr<SentenceExpression> Parse::_ParseNumber(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
+std::unique_ptr<SentenceExpression> Parse::_ParseNumber(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
 	double temp { 0 };
 	if (Syntax::MatchNumber(src, size, pos, nextPos, &temp)) {
-		return std::make_shared<SentenceExpression>(std::make_shared<ValueNumber>(temp));
+		return std::make_unique<SentenceExpression>(std::make_shared<ValueNumber>(temp));
 	}
 	return nullptr;
 }
 
-std::shared_ptr<SentenceExpression> Parse::_ParseBool(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
+std::unique_ptr<SentenceExpression> Parse::_ParseBool(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
 	bool temp { false };
 	if (Syntax::MatchBool(src, size, pos, nextPos, &temp)) {
-		return std::make_shared<SentenceExpression>(std::make_shared<ValueBool>(temp));
+		return std::make_unique<SentenceExpression>(std::make_shared<ValueBool>(temp));
 	}
 	return nullptr;
 }
 
-std::shared_ptr<SentenceExpression> Parse::_ParseNull(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
+std::unique_ptr<SentenceExpression> Parse::_ParseNull(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
 	if (Syntax::MatchNull(src, size, pos, nextPos)) {
-		return std::make_shared<SentenceExpression>(std::make_shared<ValueNull>());
+		return std::make_unique<SentenceExpression>(std::make_shared<ValueNull>());
 	}
 	return nullptr;
 }
-std::shared_ptr<SentenceExpression> Parse::_ParseArray(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
+std::unique_ptr<SentenceExpression> Parse::_ParseArray(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
 	if (!Syntax::MatchArrayBegin(src, size, pos, &pos)) {
 		return nullptr;
 	}
-	std::vector<std::shared_ptr<SentenceExpression>> temp;
+	std::vector<std::unique_ptr<SentenceExpression>> temp;
 	while (true) {
 		Jump(src, size, pos, &pos);
 		auto expression = _ParseExpression(src, size, pos, &pos);
 		if (!expression) {
 			break;
 		}
-		temp.emplace_back(expression);
+		temp.emplace_back(std::move(expression));
 		Jump(src, size, pos, &pos);
 		if (!Syntax::MatchSplitSymbol(src, size, pos, &pos)) {
 			break;
@@ -1015,10 +1015,10 @@ std::shared_ptr<SentenceExpression> Parse::_ParseArray(const std::string& src, s
 		return nullptr;
 	}
 	*nextPos = pos;
-	return std::make_shared<SentenceExpressionValueArray>(temp);
+	return std::make_unique<SentenceExpressionValueArray>(std::move(temp));
 }
 
-std::shared_ptr<SentenceExpression> Parse::_ParseArrayItem(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
+std::unique_ptr<SentenceExpression> Parse::_ParseArrayItem(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
 	if (!Syntax::SearchNextArray(src, size, pos)) {
 		return nullptr;
 	}
@@ -1030,7 +1030,7 @@ std::shared_ptr<SentenceExpression> Parse::_ParseArrayItem(const std::string& sr
 	if (!Syntax::MatchArrayBegin(src, size, pos, &pos)) {
 		return nullptr;
 	}
-	std::vector<std::shared_ptr<SentenceExpression>> indexExpressionVec;
+	std::vector<std::unique_ptr<SentenceExpression>> indexExpressionVec;
 	while (true) {
 		Jump(src, size, pos, &pos);
 		auto indexExpression = _ParseExpression(src, size, pos, &pos);
@@ -1041,7 +1041,7 @@ std::shared_ptr<SentenceExpression> Parse::_ParseArrayItem(const std::string& sr
 		if (!Syntax::MatchArrayEnd(src, size, pos, &pos)) {
 			return nullptr;
 		}
-		indexExpressionVec.emplace_back(indexExpression);
+		indexExpressionVec.emplace_back(std::move(indexExpression));
 
 		auto savePos = pos;
 		Jump(src, size, pos, &pos);
@@ -1055,20 +1055,20 @@ std::shared_ptr<SentenceExpression> Parse::_ParseArrayItem(const std::string& sr
 	}
 	*nextPos = pos;
 
-	auto analysis = std::make_shared<ExpressionVariableAnalysisArrayItem>(valueExpression, indexExpressionVec);
-	return std::make_shared<SentenceExpressionVariable>(analysis);
+	auto analysis = std::make_unique<ExpressionVariableAnalysisArrayItem>(std::move(valueExpression), std::move(indexExpressionVec));
+	return std::make_unique<SentenceExpressionVariable>(std::move(analysis));
 }
 
-std::shared_ptr<SentenceExpression> Parse::_ParseVariableName(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
+std::unique_ptr<SentenceExpression> Parse::_ParseVariableName(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
 	std::string name;
 	if (Syntax::MatchName(src, size, pos, nextPos, &name)) {
-		auto analysis = std::make_shared<ExpressionVariableAnalysisName>(name);
-		return std::make_shared<SentenceExpressionVariable>(analysis);
+		auto analysis = std::make_unique<ExpressionVariableAnalysisName>(name);
+		return std::make_unique<SentenceExpressionVariable>(std::move(analysis));
 	}
 	return nullptr;
 }
 
-std::shared_ptr<SentenceExpression> Parse::_ParseFunctioCall(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
+std::unique_ptr<SentenceExpression> Parse::_ParseFunctioCall(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
 	std::string name;
 	if (!Syntax::MatchName(src, size, pos, &pos, &name)) {
 		return nullptr;
@@ -1078,13 +1078,13 @@ std::shared_ptr<SentenceExpression> Parse::_ParseFunctioCall(const std::string& 
 		return nullptr;
 	}
 	Jump(src, size, pos, &pos);
-	std::vector<std::shared_ptr<SentenceExpression>> args;
+	std::vector<std::unique_ptr<SentenceExpression>> args;
 	while (true) {
 		auto argExpression = _ParseExpression(src, size, pos, &pos);
 		if (!argExpression) {
 			break;
 		}
-		args.emplace_back(argExpression);
+		args.emplace_back(std::move(argExpression));
 		Jump(src, size, pos, &pos);
 		if (!Syntax::MatchSplitSymbol(src, size, pos, &pos)) {
 			break;
@@ -1095,10 +1095,10 @@ std::shared_ptr<SentenceExpression> Parse::_ParseFunctioCall(const std::string& 
 		return nullptr;
 	}
 	*nextPos = pos;
-	return std::make_shared<SentenceExpressionFunctionCall>(name, args);
+	return std::make_unique<SentenceExpressionFunctionCall>(name, std::move(args));
 }
 
-std::shared_ptr<SentenceExpression> Parse::_ParseDoubleExpression(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
+std::unique_ptr<SentenceExpression> Parse::_ParseDoubleExpression(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
 	DoubleSymbol symbol;
 	bool bDouble = Syntax::MatchDoubleSymbol(src, size, pos, &pos, &symbol);
 	bool bLast = !bDouble;
@@ -1114,10 +1114,10 @@ std::shared_ptr<SentenceExpression> Parse::_ParseDoubleExpression(const std::str
 		return nullptr;
 	}
 	*nextPos = pos;
-	return std::make_shared<SentenceExpressionDouble>(variableSentence, calculate, bLast);
+	return std::make_unique<SentenceExpressionDouble>(std::move(variableSentence), calculate, bLast);
 }
 
-std::shared_ptr<SentenceExpression> Parse::_ParseNotExpression(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
+std::unique_ptr<SentenceExpression> Parse::_ParseNotExpression(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
 	if (!Syntax::MatchNotSymbol(src, size, pos, &pos)) {
 		return nullptr;
 	}
@@ -1132,10 +1132,10 @@ std::shared_ptr<SentenceExpression> Parse::_ParseNotExpression(const std::string
 		}
 	}
 	*nextPos = pos;
-	return std::make_shared<SentenceExpressionNot>(expression);
+	return std::make_unique<SentenceExpressionNot>(std::move(expression));
 }
 
-std::shared_ptr<SentenceExpression> Parse::_ParseNew(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
+std::unique_ptr<SentenceExpression> Parse::_ParseNew(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
 	if (!Syntax::MatchNew(src, size, pos, &pos)) {
 		return nullptr;
 	}
@@ -1154,10 +1154,10 @@ std::shared_ptr<SentenceExpression> Parse::_ParseNew(const std::string& src, std
 		}
 	}
 	*nextPos = pos;
-	return std::make_shared<SentenceExpressionNew>(name);
+	return std::make_unique<SentenceExpressionNew>(name);
 }
 
-std::shared_ptr<SentenceExpression> Parse::_ParseInside(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
+std::unique_ptr<SentenceExpression> Parse::_ParseInside(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
 	if (!Syntax::SearchNextInside(src, size, pos)) {
 		return nullptr;
 	}
@@ -1169,7 +1169,7 @@ std::shared_ptr<SentenceExpression> Parse::_ParseInside(const std::string& src, 
 	if (!Syntax::MatchInsideSymbol(src, size, pos, &pos)) {
 		return nullptr;
 	}
-	std::vector<std::shared_ptr<SentenceExpression>> insides;
+	std::vector<std::unique_ptr<SentenceExpression>> insides;
 	bool bTailCall = false;
 	while (true) {
 		Jump(src, size, pos, &pos);
@@ -1177,12 +1177,13 @@ std::shared_ptr<SentenceExpression> Parse::_ParseInside(const std::string& src, 
 		if (!append) {
 			return nullptr;
 		}
-		insides.emplace_back(append);
+		auto expressionType = append->GetExpressionType();
+		insides.emplace_back(std::move(append));
 
 		auto savePos = pos;
 		Jump(src, size, pos, &pos);
 		if (!Syntax::MatchInsideSymbol(src, size, pos, &pos)) {
-			bTailCall = (append->GetExpressionType() == ExpressionType::Function);
+			bTailCall = (expressionType == ExpressionType::Function);
 			pos = savePos;
 			break;
 		}
@@ -1192,18 +1193,18 @@ std::shared_ptr<SentenceExpression> Parse::_ParseInside(const std::string& src, 
 	}
 	*nextPos = pos;
 	if (bTailCall) {
-		return std::make_shared<SentenceExpressionInside>(header, insides);
+		return std::make_unique<SentenceExpressionInside>(std::move(header), std::move(insides));
 	}
-	auto analysis = std::make_shared<ExpressionVariableAnalysisInside>(header, insides);
-	return std::make_shared<SentenceExpressionVariable>(analysis);
+	auto analysis = std::make_unique<ExpressionVariableAnalysisInside>(std::move(header), std::move(insides));
+	return std::make_unique<SentenceExpressionVariable>(std::move(analysis));
 }
 
-std::shared_ptr<SentenceExpression> Parse::_ParseExpressionMath(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
+std::unique_ptr<SentenceExpression> Parse::_ParseExpressionMath(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
 	return _ParseExpressionMathBracket(src, size, pos, nextPos, false);
 }
 
-std::shared_ptr<SentenceExpression> Parse::_ParseExpressionMathBracket(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos, bool bBracket) {
-	std::stack<std::shared_ptr<SentenceExpression>> expressionStack;
+std::unique_ptr<SentenceExpression> Parse::_ParseExpressionMathBracket(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos, bool bBracket) {
+	std::stack<std::unique_ptr<SentenceExpression>> expressionStack;
 	std::stack<MathSymbol> symbolStack;
 
 	static const auto calcLoopFunc = [](MathSymbol symbol, decltype(expressionStack)* stack0, decltype(symbolStack)* stack1) {
@@ -1218,21 +1219,21 @@ std::shared_ptr<SentenceExpression> Parse::_ParseExpressionMathBracket(const std
 			}
 			auto topSymbol = stack1->top();
 			stack1->pop();
-			auto vr = stack0->top();
+			auto vr = std::move(stack0->top());
 			stack0->pop();
-			auto vl = stack0->top();
+			auto vl = std::move(stack0->top());
 			stack0->pop();
 			auto calculate = _GetCalculate(topSymbol);
 			if (!calculate) {
 				return false;
 			}
-			std::shared_ptr<SentenceExpressionMath> expression { nullptr };
+			std::unique_ptr<SentenceExpressionMath> expression { nullptr };
 			if (Syntax::IsVariableSelfAssignSymbol(topSymbol)) {
-				expression = std::make_shared<SentenceExpressionSelfAssign>(vl, vr, calculate);
+				expression = std::make_unique<SentenceExpressionSelfAssign>(std::move(vl), std::move(vr), calculate);
 			} else {
-				expression = std::make_shared<SentenceExpressionMath>(vl, vr, calculate);
+				expression = std::make_unique<SentenceExpressionMath>(std::move(vl), std::move(vr), calculate);
 			}
-			stack0->emplace(expression);
+			stack0->emplace(std::move(expression));
 		}
 		return true;
 	};
@@ -1246,12 +1247,12 @@ std::shared_ptr<SentenceExpression> Parse::_ParseExpressionMathBracket(const std
 			if (!priorityExpression) {
 				return nullptr;
 			}
-			expressionStack.emplace(priorityExpression);
+			expressionStack.emplace(std::move(priorityExpression));
 			bRet = true;
 		} else {
 			auto value = _ParseExpressionValue(src, size, pos, &pos);
 			if (value) {
-				expressionStack.emplace(value);
+				expressionStack.emplace(std::move(value));
 				bRet = true;
 			}
 		}
@@ -1297,7 +1298,7 @@ std::shared_ptr<SentenceExpression> Parse::_ParseExpressionMathBracket(const std
 
 	*nextPos = pos;
 
-	return expressionStack.top();
+	return std::move(expressionStack.top());
 }
 
 IValueCalculate* Parse::_GetCalculate(MathSymbol symbol) {

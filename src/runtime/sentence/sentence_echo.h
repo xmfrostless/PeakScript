@@ -11,11 +11,12 @@ namespace peak {
 
 class SentenceExpression;
 class SentenceEcho : public Sentence {
+	MAKE_NON_COPYABLE(SentenceEcho);
 public:
-	SentenceEcho(std::shared_ptr<SentenceExpression> expression);
+	SentenceEcho(std::unique_ptr<SentenceExpression> expression);
 	virtual ExecuteResult Execute(std::shared_ptr<Space> space);
 private:
-	std::shared_ptr<SentenceExpression> _expression{nullptr};
+	std::unique_ptr<SentenceExpression> _expression{nullptr};
 };
 
 } // namespace peak

@@ -4,11 +4,11 @@
 
 using namespace peak;
 
-SentenceFor::SentenceFor(std::shared_ptr<Sentence> sentence0,
-						 std::shared_ptr<SentenceExpression> expression0,
-						 std::shared_ptr<SentenceExpression> expression1,
-						 std::shared_ptr<Sentence> content)
-	: _sentence0(sentence0), _expression0(expression0), _expression1(expression1), _content(content) {
+SentenceFor::SentenceFor(std::unique_ptr<Sentence> sentence0,
+						 std::unique_ptr<SentenceExpression> expression0,
+						 std::unique_ptr<SentenceExpression> expression1,
+						 std::unique_ptr<Sentence> content)
+	: _sentence0(std::move(sentence0)), _expression0(std::move(expression0)), _expression1(std::move(expression1)), _content(std::move(content)) {
 }
 
 ExecuteResult SentenceFor::Execute(std::shared_ptr<Space> space) {
@@ -42,7 +42,7 @@ ExecuteResult SentenceFor::Execute(std::shared_ptr<Space> space) {
 				break;
 			}
 			if (ret == ExecuteResult::Return) {
-				SetReturnValue(std::static_pointer_cast<SentenceReturn>(_content)->GetReturnValue());
+				SetReturnValue(static_cast<SentenceReturn*>(_content.get())->GetReturnValue());
 				tempSpace->Clear();
 				return ExecuteResult::Return;
 			}

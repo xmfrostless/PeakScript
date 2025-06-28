@@ -11,8 +11,9 @@ namespace peak {
 
 
 class SentenceExpressionFunctionCall : public SentenceExpression {
+	MAKE_NON_COPYABLE(SentenceExpressionFunctionCall);
 public:
-	SentenceExpressionFunctionCall(const std::string& name, const std::vector<std::shared_ptr<SentenceExpression>>& args);
+	SentenceExpressionFunctionCall(const std::string& name, std::vector<std::unique_ptr<SentenceExpression>> args);
 
 	ExecuteResult ExecuteFromInside(std::shared_ptr<Space> objSpace, std::shared_ptr<Space> space);
 	virtual ExecuteResult Execute(std::shared_ptr<Space> space);
@@ -23,7 +24,7 @@ public:
 
 private:
 	std::string _name;
-	std::vector<std::shared_ptr<SentenceExpression>> _args;
+	std::vector<std::unique_ptr<SentenceExpression>> _args;
 };
 
 } // namespace peak

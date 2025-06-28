@@ -14,14 +14,15 @@ class SentenceExpressionVariable;
 class IValueCalculate;
 
 class SentenceExpressionDouble : public SentenceExpression {
+	MAKE_NON_COPYABLE(SentenceExpressionDouble);
 public:
-	SentenceExpressionDouble(std::shared_ptr<SentenceExpression> variableExpresison, IValueCalculate* calculate, bool last);
+	SentenceExpressionDouble(std::unique_ptr<SentenceExpression> variableExpresison, IValueCalculate* calculate, bool last);
 	virtual ExecuteResult Execute(std::shared_ptr<Space> space);
 
 	virtual ExpressionType GetExpressionType() const { return ExpressionType::DoubleSymbol; }
 
 private:
-	std::shared_ptr<SentenceExpression> _variableExpresison{nullptr};
+	std::unique_ptr<SentenceExpression> _variableExpresison{nullptr};
 	IValueCalculate* _calculate{nullptr};
 	bool _bLast{false};
 };

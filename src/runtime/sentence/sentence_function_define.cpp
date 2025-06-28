@@ -6,8 +6,8 @@
 
 using namespace peak;
 
-SentenceFunctionDefine::SentenceFunctionDefine(const std::string& name, const std::vector<std::string>& params, std::shared_ptr<Sentence> content)
-	: _name(name), _params(params), _content(content) {
+SentenceFunctionDefine::SentenceFunctionDefine(const std::string& name, const std::vector<std::string>& params, std::unique_ptr<Sentence> content)
+	: _name(name), _params(params), _content(std::move(content)) {
 }
 ExecuteResult SentenceFunctionDefine::Execute(std::shared_ptr<Space> space) {
 	auto func = [this](const std::vector<std::shared_ptr<Value>>&, std::shared_ptr<Space> space) -> std::shared_ptr<Value> {
@@ -16,7 +16,7 @@ ExecuteResult SentenceFunctionDefine::Execute(std::shared_ptr<Space> space) {
 			return nullptr;
 		}
 		if (result == ExecuteResult::Return) {
-			return std::static_pointer_cast<SentenceReturn>(_content)->GetReturnValue();
+			return static_cast<SentenceReturn*>(_content.get())->GetReturnValue();
 		}
 		return std::make_shared<ValueNull>();
 	};

@@ -10,7 +10,6 @@
 namespace peak {
 
 class Module;
-class Executer;
 
 class ModulePool {
 public:

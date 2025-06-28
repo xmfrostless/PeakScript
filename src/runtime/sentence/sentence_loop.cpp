@@ -5,8 +5,8 @@
 
 using namespace peak;
 
-SentenceLoop::SentenceLoop(const std::string& indexParam, std::shared_ptr<SentenceExpression> condition, std::shared_ptr<Sentence> sentence)
-	: _indexParam(indexParam), _condition(condition), _sentence(sentence) {
+SentenceLoop::SentenceLoop(const std::string& indexParam, std::unique_ptr<SentenceExpression> condition, std::unique_ptr<Sentence> sentence)
+	: _indexParam(indexParam), _condition(std::move(condition)), _sentence(std::move(sentence)) {
 }
 ExecuteResult SentenceLoop::Execute(std::shared_ptr<Space> space) {
 	if (!IsSuccess(_condition->Execute(space))) {
@@ -53,7 +53,7 @@ ExecuteResult SentenceLoop::Execute(std::shared_ptr<Space> space) {
 				break;
 			}
 			if (ret == ExecuteResult::Return) {
-				SetReturnValue(std::static_pointer_cast<SentenceReturn>(_sentence)->GetReturnValue());
+				SetReturnValue(static_cast<SentenceReturn*>(_sentence.get())->GetReturnValue());
 				tempSpace->Clear();
 				return ExecuteResult::Return;
 			}

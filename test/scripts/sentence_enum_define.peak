@@ -1,0 +1,10 @@
+
+enum Enum {
+    Enum1,
+    Enum2,
+    Enum3 = 100,
+    Enum4,
+}
+
+echo Enum.Enum1;
+echo Enum;

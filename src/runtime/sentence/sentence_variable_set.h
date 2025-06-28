@@ -12,13 +12,14 @@ namespace peak {
 class SentenceExpression;
 
 class SentenceVariableSet : public Sentence {
+	MAKE_NON_COPYABLE(SentenceVariableSet);
 public:
-	SentenceVariableSet(const std::string& name, std::shared_ptr<SentenceExpression> expression);
+	SentenceVariableSet(const std::string& name, std::unique_ptr<SentenceExpression> expression);
 	virtual ExecuteResult Execute(std::shared_ptr<Space> space);
 
 private:
 	std::string _name;
-	std::shared_ptr<SentenceExpression> _expression{nullptr};
+	std::unique_ptr<SentenceExpression> _expression{nullptr};
 };
 
 } // namespace peak

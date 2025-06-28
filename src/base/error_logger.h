@@ -24,6 +24,10 @@
 #include <charconv>
 #include <cmath>
 
+#define MAKE_NON_COPYABLE(__CLS__) \
+    __CLS__(const __CLS__&) = delete; \
+    __CLS__& operator=(const __CLS__&) = delete;
+
 namespace peak {
 
 enum class ErrorRuntimeCode {

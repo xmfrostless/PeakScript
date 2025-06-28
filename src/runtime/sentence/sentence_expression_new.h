@@ -10,6 +10,7 @@
 namespace peak {
 
 class SentenceExpressionNew : public SentenceExpression {
+	MAKE_NON_COPYABLE(SentenceExpressionNew);
 public:
 	SentenceExpressionNew(const std::string& name);
 	virtual ExpressionType GetExpressionType() const { return ExpressionType::New; }

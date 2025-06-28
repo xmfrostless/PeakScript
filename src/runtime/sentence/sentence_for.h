@@ -11,18 +11,19 @@ namespace peak {
 
 class SentenceExpression;
 class SentenceFor : public SentenceReturn {
+	MAKE_NON_COPYABLE(SentenceFor);
 public:
-	SentenceFor(std::shared_ptr<Sentence> sentence0,
-				std::shared_ptr<SentenceExpression> expression0,
-				std::shared_ptr<SentenceExpression> expression1,
-				std::shared_ptr<Sentence> content);
+	SentenceFor(std::unique_ptr<Sentence> sentence0,
+				std::unique_ptr<SentenceExpression> expression0,
+				std::unique_ptr<SentenceExpression> expression1,
+				std::unique_ptr<Sentence> content);
 	virtual ExecuteResult Execute(std::shared_ptr<Space> space);
 
 private:
-	std::shared_ptr<Sentence> _sentence0{nullptr};
-	std::shared_ptr<SentenceExpression> _expression0{nullptr};
-	std::shared_ptr<SentenceExpression> _expression1{nullptr};
-	std::shared_ptr<Sentence> _content{nullptr};
+	std::unique_ptr<Sentence> _sentence0{nullptr};
+	std::unique_ptr<SentenceExpression> _expression0{nullptr};
+	std::unique_ptr<SentenceExpression> _expression1{nullptr};
+	std::unique_ptr<Sentence> _content{nullptr};
 };
 
 } // namespace peak

@@ -4,8 +4,8 @@
 
 using namespace peak;
 
-SentenceObjectDefine::SentenceObjectDefine(const std::string& name, const std::string& parentName, std::list<std::shared_ptr<Sentence>>& sentenceList)
-	: _name(name), _parentName(parentName), _sentenceList(sentenceList) {
+SentenceObjectDefine::SentenceObjectDefine(const std::string& name, const std::string& parentName, std::list<std::unique_ptr<Sentence>> sentenceList)
+	: _name(name), _parentName(parentName), _sentenceList(std::move(sentenceList)) {
 }
 
 ExecuteResult SentenceObjectDefine::Execute(std::shared_ptr<Space> space) {
@@ -29,7 +29,7 @@ ExecuteResult SentenceObjectDefine::Execute(std::shared_ptr<Space> space) {
 	}
 	auto valueObject = std::make_shared<ValueObject>(space, parentObject);
 	auto objectSpace = valueObject->GetSpace();
-	for (auto sentence : _sentenceList) {
+	for (auto& sentence : _sentenceList) {
 		if (!IsSuccess(sentence->Execute(objectSpace))) {
 			ErrorLogger::LogRuntimeError(_name);
 			ErrorLogger::LogRuntimeError(ErrorRuntimeCode::ObjectDefine, "The object build failed!");

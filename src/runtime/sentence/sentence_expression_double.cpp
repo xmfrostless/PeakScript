@@ -6,8 +6,8 @@
 
 using namespace peak;
 
-SentenceExpressionDouble::SentenceExpressionDouble(std::shared_ptr<SentenceExpression> variableExpresison, IValueCalculate* calculate, bool last)
-	: _variableExpresison(variableExpresison), _calculate(calculate), _bLast(last) {
+SentenceExpressionDouble::SentenceExpressionDouble(std::unique_ptr<SentenceExpression> variableExpresison, IValueCalculate* calculate, bool last)
+	: _variableExpresison(std::move(variableExpresison)), _calculate(calculate), _bLast(last) {
 }
 
 ExecuteResult SentenceExpressionDouble::Execute(std::shared_ptr<Space> space) {
@@ -19,7 +19,7 @@ ExecuteResult SentenceExpressionDouble::Execute(std::shared_ptr<Space> space) {
 		ErrorLogger::LogRuntimeError(ErrorRuntimeCode::ExpressionDouble, "The expression execute failed!");
 		return ExecuteResult::Failed;
 	}
-	auto variable = std::static_pointer_cast<SentenceExpressionVariable>(_variableExpresison)->GetVariable();
+	auto variable = static_cast<SentenceExpressionVariable*>(_variableExpresison.get())->GetVariable();
 	auto value = _variableExpresison->GetValue();
 	if (!ValueTool::IsNumber(value.get())) {
 		ErrorLogger::LogRuntimeError(ErrorRuntimeCode::ExpressionDouble, "The value of variable isn't a type of 'number'!");

@@ -6,20 +6,21 @@
 #pragma once
 
 #include "base/error_logger.h"
+#include "grammar/parse.h"
 
 namespace peak {
 
-struct ParseData;
 class Space;
 class Variable;
 class Value;
 
 class Executer {
+	MAKE_NON_COPYABLE(Executer);
 public:
-	static std::shared_ptr<Executer> Create(const std::string& src);
+	static std::unique_ptr<Executer> Create(const std::string& src);
 
 public:
-	Executer(std::shared_ptr<ParseData> data);
+	Executer(std::unique_ptr<ParseData> data);
 	~Executer();
 	
 	bool Execute();
@@ -31,7 +32,7 @@ public:
 	bool AddVariable(std::shared_ptr<Variable> variable);
 
 private:
-	std::shared_ptr<ParseData> _parseData{nullptr};
+	std::unique_ptr<ParseData> _parseData{nullptr};
 	std::shared_ptr<Space> _space{nullptr};
 	std::shared_ptr<Space> _outsideSpace{nullptr};
 };
