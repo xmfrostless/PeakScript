@@ -9,7 +9,7 @@
 
 namespace peak {
 
-class SentenceExpressionNew : public SentenceExpression {
+class SentenceExpressionNew: public SentenceExpression {
 	MAKE_NON_COPYABLE(SentenceExpressionNew);
 public:
 	SentenceExpressionNew(const std::string& name);
@@ -18,6 +18,7 @@ public:
 
 private:
 	std::string _name;
+	std::size_t _hashCode { 0 };
 };
 
 

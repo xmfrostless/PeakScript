@@ -17,7 +17,7 @@ public:
 	void Push(std::unique_ptr<Sentence> sentence);
 
 private:
-	std::list<std::unique_ptr<Sentence>> _list;
+	std::vector<std::unique_ptr<Sentence>> _list;
 };
 
 } // namespace peak

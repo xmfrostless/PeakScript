@@ -16,6 +16,7 @@ public:
 	using FunctionType = std::function<std::shared_ptr<Value>(const std::vector<std::shared_ptr<Value>>&, std::shared_ptr<Space>)>;
 
 public:
+	ValueFunction() = default;
 	ValueFunction(std::size_t paramSize, FunctionType func);
 	ValueFunction(const std::vector<std::string>& params, FunctionType func);
 	std::shared_ptr<Value> Call(const std::vector<std::shared_ptr<Value>>& args, std::shared_ptr<Space> space);
@@ -26,10 +27,7 @@ public:
 	std::size_t GetParamSize() const;
 
 private:
-	ValueFunction() = default;
-
-private:
-	std::vector<std::string> _params;
+	std::vector<std::tuple<std::string, std::size_t>> _params;
 	FunctionType _function;
 };
 

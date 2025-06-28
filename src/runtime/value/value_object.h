@@ -21,6 +21,8 @@ public:
 	virtual std::string ToString() const override;
 	virtual std::string ToRawString() const override;
 
+	bool UpdateValue(const std::string& name, std::shared_ptr<Value> value);
+
 private:
 	std::shared_ptr<Space> _space { nullptr };
 };

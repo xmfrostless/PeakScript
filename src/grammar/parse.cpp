@@ -388,7 +388,7 @@ std::unique_ptr<Sentence> Parse::_ParseEnumDefine(const std::string& src, std::s
 	}
 	std::set<std::string> checkNameSet;
 	std::set<double> checkValueSet;
-	std::list<std::pair<std::string, std::shared_ptr<ValueNumber>>> valueList;
+	std::vector<std::pair<std::string, std::shared_ptr<ValueNumber>>> valueList;
 	double indexValue = 0;
 	while (true) {
 		if (pos >= size) {
@@ -465,7 +465,7 @@ std::unique_ptr<Sentence> Parse::_ParseObjectDefine(const std::string& src, std:
 		return nullptr;
 	}
 
-	std::list<std::unique_ptr<Sentence>> sentenceList;
+	std::vector<std::unique_ptr<Sentence>> sentenceList;
 	while (true) {
 		if (pos >= size) {
 			return nullptr;

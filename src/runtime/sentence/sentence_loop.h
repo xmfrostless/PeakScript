@@ -18,6 +18,7 @@ public:
 
 private:
 	std::string _indexParam;
+	std::size_t _indexParamHashCode { 0 };
 	std::unique_ptr<SentenceExpression> _condition { nullptr };
 	std::unique_ptr<Sentence> _sentence { nullptr };
 };

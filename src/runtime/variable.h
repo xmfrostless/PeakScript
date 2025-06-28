@@ -19,8 +19,10 @@ enum class VariableAttribute {
 class Variable {
 public:
 	Variable(const std::string& name, VariableAttribute attribute, std::shared_ptr<Value> value = nullptr);
+	Variable(const std::string& name, std::size_t hashCode, VariableAttribute attribute, std::shared_ptr<Value> value = nullptr);
 
 	VariableAttribute GetAttribute() const;
+	std::size_t GetHashCode() const;
 	const std::string& GetName() const;
 
 	bool SetValue(std::shared_ptr<Value> value);
@@ -29,6 +31,7 @@ public:
 
 private:
 	std::string _name;
+	std::size_t _hashCode { 0 };
 	std::shared_ptr<Value> _value { nullptr };
 	VariableAttribute _attribute { VariableAttribute::None };
 };

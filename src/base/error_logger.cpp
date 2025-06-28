@@ -21,14 +21,14 @@ std::unordered_map<ErrorRuntimeCode, std::string> ErrorLogger::_errorCodeNameMap
 	{ErrorRuntimeCode::SelfAssign, "SelfAssign, \"+=, -=, *=, /=, %= ...\""},
 	{ErrorRuntimeCode::Array, "Array, \"[ ]\""},
 	{ErrorRuntimeCode::ExpressionVariable, "ExpressionVariable, \"variable\""},
-	{ErrorRuntimeCode::For, "For, \"for(;;)\""},
-	{ErrorRuntimeCode::Foreach, "Foreach, \"foreach\",\"for-in\""},
+	{ErrorRuntimeCode::For, "For, \"for\""},
+	{ErrorRuntimeCode::Foreach, "Foreach, \"for-in\""},
 	{ErrorRuntimeCode::FunctionDefine, "FunctionDefine, \"function { }\""},
 	{ErrorRuntimeCode::Loop, "Loop, \"loop\""},
 	{ErrorRuntimeCode::Return, "Return, \"return\""},
 	{ErrorRuntimeCode::TryCatchFinally, "TryCatchFinally, \"try-catch-finally\""},
 	{ErrorRuntimeCode::VariableAssign, "VariableAssign, \"=\""},
-	{ErrorRuntimeCode::VariableDefine, "VariableDefine, \"var, the, const\""},
+	{ErrorRuntimeCode::VariableDefine, "VariableDefine, \"var, const\""},
 	{ErrorRuntimeCode::VariableSet, "VariableSet, \"set\""},
 	{ErrorRuntimeCode::While, "While, \"while\""},
 	{ErrorRuntimeCode::VariableNameAnalysis, "VariableNameAnalysis, \"variable-name\""},
@@ -39,7 +39,6 @@ std::unordered_map<ErrorRuntimeCode, std::string> ErrorLogger::_errorCodeNameMap
 	{ErrorRuntimeCode::Inside, "Inside, \"inside.value\""},
 	{ErrorRuntimeCode::EnumDefine, "EnumDefine, \"enum\""},
 	{ErrorRuntimeCode::Import, "Import, \"import\""},
-	{ErrorRuntimeCode::Export, "Export, \"export\""},
 };
 
 void ErrorLogger::Locate(std::function<void(const std::string&)> logger) {
@@ -47,7 +46,7 @@ void ErrorLogger::Locate(std::function<void(const std::string&)> logger) {
 }
 
 void ErrorLogger::Log(const std::string& message) {
-	_logger("[!]error: " + message);
+	_logger("[ERROR]: " + message);
 }
 
 void ErrorLogger::LogParseError(const std::string& src, std::size_t size, std::size_t pos) {
@@ -78,5 +77,5 @@ void ErrorLogger::LogRuntimeError(ErrorRuntimeCode code, const std::string& desc
 }
 
 void ErrorLogger::LogRuntimeError(const std::string& desc) {
-	Log("[runtime]: " + desc);
+	Log("RUNTIME: " + desc);
 }

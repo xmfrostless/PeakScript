@@ -46,3 +46,11 @@ std::string ValueObject::ToRawString() const {
 	return ToString();
 }
 
+bool ValueObject::UpdateValue(const std::string& name, std::shared_ptr<Value> value) {
+	auto variable = _space->FindVariable(name);
+	if (!variable) {
+		return false;
+	}
+	variable->SetValue(value);
+	return true;
+}

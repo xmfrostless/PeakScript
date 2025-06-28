@@ -18,7 +18,7 @@ class IValueCalculate;
 
 struct ParseData {
 	bool bSuccess{false};
-	std::list<std::unique_ptr<Sentence>> sentenceList;
+	std::vector<std::unique_ptr<Sentence>> sentenceList;
 };
 
 class Parse {
@@ -88,8 +88,8 @@ private:
 	static IValueCalculate* _GetCalculate(DoubleSymbol symbol);
 
 private:
-	using SentenceParseList = std::list<std::function<std::unique_ptr<Sentence>(const std::string&, std::size_t, std::size_t, std::size_t*)>>;
-	using ExpressionParseList = std::list<std::function<std::unique_ptr<SentenceExpression>(const std::string&, std::size_t, std::size_t, std::size_t*)>>;
+	using SentenceParseList = std::vector<std::function<std::unique_ptr<Sentence>(const std::string&, std::size_t, std::size_t, std::size_t*)>>;
+	using ExpressionParseList = std::vector<std::function<std::unique_ptr<SentenceExpression>(const std::string&, std::size_t, std::size_t, std::size_t*)>>;
 
 	static SentenceParseList _sentenceParseList;
 	static ExpressionParseList _sentenceValueParseList;

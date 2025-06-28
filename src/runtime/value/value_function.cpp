@@ -8,11 +8,15 @@ using namespace peak;
 ValueFunction::ValueFunction(std::size_t paramSize, FunctionType func)
 	: _params(paramSize), _function(func) {
 	for (auto i = 0u; i < paramSize; ++i) {
-		_params[i] = std::string("%") + std::to_string(i);
+		std::string key = std::string("%") + std::to_string(i);
+		_params[i] = std::make_tuple(key, HashFunction::String(key));
 	}
 }
 ValueFunction::ValueFunction(const std::vector<std::string>& params, FunctionType func)
-	: _params(params), _function(func) {
+	: _params(params.size()), _function(func) {
+	std::transform(params.begin(), params.end(), _params.begin(), [](const std::string& str) {
+		return std::make_tuple(str, HashFunction::String(str));
+	});
 }
 
 std::shared_ptr<Value> ValueFunction::Call(const std::vector<std::shared_ptr<Value>>& args, std::shared_ptr<Space> space) {
@@ -23,7 +27,7 @@ std::shared_ptr<Value> ValueFunction::Call(const std::vector<std::shared_ptr<Val
 
 	auto tempSpace = std::make_shared<Space>(SpaceType::Function, space);
 	for (std::size_t i = 0; i < args.size(); ++i) {
-		auto tempVariable = std::make_shared<Variable>(_params[i], VariableAttribute::None);
+		auto tempVariable = std::make_shared<Variable>(std::get<0>(_params[i]), std::get<1>(_params[i]), VariableAttribute::None);
 		if (!tempSpace->AddVariable(tempVariable)) {
 			ErrorLogger::LogRuntimeError(ErrorRuntimeCode::FunctionCall, "The function params name is exist!");
 			return nullptr;
@@ -38,7 +42,7 @@ std::shared_ptr<Value> ValueFunction::Call(const std::vector<std::shared_ptr<Val
 std::string ValueFunction::ToString() const {
 	std::string ret = "function (";
 	for (auto i = 0u; i < _params.size(); ++i) {
-		ret += _params[i];
+		ret += std::get<0>(_params[i]);
 		if (i < _params.size() - 1) {
 			ret += ", ";
 		}
@@ -52,7 +56,10 @@ std::string ValueFunction::ToRawString() const {
 }
 
 std::shared_ptr<Value> ValueFunction::Clone() const {
-	return std::make_unique<ValueFunction>(_params, _function);
+	auto value = std::make_unique<ValueFunction>();
+	value->_function = _function;
+	value->_params = _params;
+	return value;
 }
 
 std::size_t ValueFunction::GetParamSize() const {

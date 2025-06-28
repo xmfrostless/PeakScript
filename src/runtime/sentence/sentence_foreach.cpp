@@ -7,6 +7,8 @@ using namespace peak;
 
 SentenceForeach::SentenceForeach(const std::string& name, const std::string& indexParam, std::unique_ptr<SentenceExpression> expression, std::unique_ptr<Sentence> sentence)
 	: _name(name), _indexParam(indexParam), _expression(std::move(expression)), _sentence(std::move(sentence)) {
+	_hashCode = HashFunction::String(_name);
+	_indexParamHashCode = HashFunction::String(_indexParam);
 }
 ExecuteResult SentenceForeach::Execute(std::shared_ptr<Space> space) {
 	if (!IsSuccess(_expression->Execute(space))) {
@@ -23,7 +25,7 @@ ExecuteResult SentenceForeach::Execute(std::shared_ptr<Space> space) {
 	}
 
 	auto tempSpace = std::make_shared<Space>(SpaceType::Loop, space);
-	auto itemVariable = std::make_shared<Variable>(_name, VariableAttribute::None);
+	auto itemVariable = std::make_shared<Variable>(_name, _hashCode, VariableAttribute::None);
 	if (!tempSpace->AddVariable(itemVariable)) {
 		ErrorLogger::LogRuntimeError(_name);
 		ErrorLogger::LogRuntimeError(ErrorRuntimeCode::Foreach, "The variable \"" + _name + "\" execute failed!");
@@ -50,7 +52,7 @@ ExecuteResult SentenceForeach::Execute(std::shared_ptr<Space> space) {
 			}
 		}
 	} else {
-		auto indexVariable = std::make_shared<Variable>(_indexParam, VariableAttribute::None);
+		auto indexVariable = std::make_shared<Variable>(_indexParam, _indexParamHashCode, VariableAttribute::None);
 		if (!_indexParam.empty()) {
 			if (!tempSpace->AddVariable(indexVariable)) {
 				ErrorLogger::LogRuntimeError(_indexParam);

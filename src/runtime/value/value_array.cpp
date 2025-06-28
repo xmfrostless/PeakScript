@@ -26,7 +26,7 @@ std::string ValueArray::ToRawString() const {
 std::shared_ptr<Value> ValueArray::Clone() const {
 	auto valueArray = std::make_shared<ValueArray>();
 	for (auto item : _value) {
-		auto variable = std::make_shared<Variable>(item->GetName(), item->GetAttribute());
+		auto variable = std::make_shared<Variable>(item->GetName(), item->GetHashCode(), item->GetAttribute());
 		if (item->GetValue()) {
 			variable->SetValue(item->GetValue()->Clone());
 		}
@@ -46,6 +46,6 @@ void ValueArray::EmplaceBack(std::shared_ptr<Variable> variable) {
 	_value.emplace_back(variable);
 }
 void ValueArray::EmplaceBack(std::shared_ptr<Value> value) {
-	auto variable = std::make_shared<Variable>("", VariableAttribute::None, value);
+	auto variable = std::make_shared<Variable>("", 0u, VariableAttribute::None, value);
 	_value.emplace_back(variable);
 }

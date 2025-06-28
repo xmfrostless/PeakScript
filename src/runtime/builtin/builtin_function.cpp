@@ -12,7 +12,11 @@ BuiltInFunction* BuiltInFunction::GetInstance() {
 }
 
 std::shared_ptr<Variable> BuiltInFunction::FindVariable(const std::string& name) const {
-	auto ite = _variables.find(name);
+	return FindVariable(HashFunction::String(name));
+}
+
+std::shared_ptr<Variable> BuiltInFunction::FindVariable(std::size_t hashCode) const {
+	auto ite = _variables.find(hashCode);
 	if (ite != _variables.end()) {
 		return ite->second;
 	}
@@ -23,7 +27,7 @@ BuiltInFunction::BuiltInFunction() {
 	auto _Emplace = [this](const std::string& name, std::size_t paramSize, ValueFunction::FunctionType func) {
 		auto value = std::make_shared<ValueFunction>(paramSize, func);
 		auto variable = std::make_shared<Variable>(name, VariableAttribute::Const, value);
-		_variables.emplace(name, variable);
+		_variables.emplace(variable->GetHashCode(), variable);
 	};
 
 	// print

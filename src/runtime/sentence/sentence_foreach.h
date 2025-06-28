@@ -7,11 +7,11 @@
 
 #include "sentence_return.h"
 
-namespace peak { 
+namespace peak {
 
 class SentenceExpression;
 
-class SentenceForeach : public SentenceReturn {
+class SentenceForeach: public SentenceReturn {
 	MAKE_NON_COPYABLE(SentenceForeach);
 public:
 	SentenceForeach(const std::string& name, const std::string& indexParam, std::unique_ptr<SentenceExpression> expression, std::unique_ptr<Sentence> sentence);
@@ -20,8 +20,10 @@ public:
 private:
 	std::string _name;
 	std::string _indexParam;
-	std::unique_ptr<SentenceExpression> _expression{nullptr};
-	std::unique_ptr<Sentence> _sentence{nullptr};
+	std::size_t _hashCode { 0 };
+	std::size_t _indexParamHashCode { 0 };
+	std::unique_ptr<SentenceExpression> _expression { nullptr };
+	std::unique_ptr<Sentence> _sentence { nullptr };
 };
 
 } // namespace peak

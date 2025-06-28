@@ -6,12 +6,13 @@ using namespace peak;
 
 SentenceVariableSet::SentenceVariableSet(const std::string& name, std::unique_ptr<SentenceExpression> expression)
 	: _name(name), _expression(std::move(expression)) {
+	_hashCode = HashFunction::String(_name);
 }
 
 ExecuteResult SentenceVariableSet::Execute(std::shared_ptr<Space> space) {
-	auto variable = space->FindVariable(_name);
+	auto variable = space->FindVariable(_hashCode);
 	if (!variable) {
-		variable = std::make_shared<Variable>(_name, VariableAttribute::None);
+		variable = std::make_shared<Variable>(_name, _hashCode, VariableAttribute::None);
 		space->AddVariable(variable);
 	}
 	if (_expression) {

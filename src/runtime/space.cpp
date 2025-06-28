@@ -45,18 +45,44 @@ bool Space::AddVariable(std::shared_ptr<Variable> value) {
 	if (!value) {
 		return false;
 	}
-	auto findIte = _variables.find(value->GetName());
+	auto code = value->GetHashCode();
+	auto findIte = _variables.find(code);
 	if (findIte != _variables.end()) {
 		ErrorLogger::LogRuntimeError(value->GetName());
 		ErrorLogger::LogRuntimeError(ErrorRuntimeCode::Space, "The variable \"" + value->GetName() + "\" is exist!");
 		return false;
 	}
-	_variables.emplace(value->GetName(), value);
+	_variables.emplace(code, value);
 	return true;
 }
 
-std::shared_ptr<Variable> Space::FindVariableFromTop(const std::string& name) const {
-	auto ite = _variables.find(name);
+std::shared_ptr<Variable> Space::FindVariable(std::size_t hashCode) const {
+	auto ite = _variables.find(hashCode);
+	if (ite != _variables.end()) {
+		return ite->second;
+	}
+	if (_parent) {
+		auto ret = _parent->FindVariable(hashCode);
+		if (ret) {
+			return ret;
+		}
+	}
+	if (_outSpace) {
+		auto ret = _outSpace->FindVariable(hashCode);
+		if (ret) {
+			return ret;
+		}
+	}
+	for (auto space : _usingSpace) {
+		auto find = space->FindVariable(hashCode);
+		if (find) {
+			return find;
+		}
+	}
+	return BuiltInFunction::GetInstance()->FindVariable(hashCode);
+}
+std::shared_ptr<Variable> Space::FindVariableFromTop(std::size_t hashCode) const {
+	auto ite = _variables.find(hashCode);
 	if (ite != _variables.end()) {
 		return ite->second;
 	}
@@ -64,29 +90,11 @@ std::shared_ptr<Variable> Space::FindVariableFromTop(const std::string& name) co
 }
 
 std::shared_ptr<Variable> Space::FindVariable(const std::string& name) const {
-	auto ite = _variables.find(name);
-	if (ite != _variables.end()) {
-		return ite->second;
-	}
-	if (_parent) {
-		auto ret = _parent->FindVariable(name);
-		if (ret) {
-			return ret;
-		}
-	}
-	if (_outSpace) {
-		auto ret = _outSpace->FindVariable(name);
-		if (ret) {
-			return ret;
-		}
-	}
-	for (auto space : _usingSpace) {
-		auto find = space->FindVariable(name);
-		if (find) {
-			return find;
-		}
-	}
-	return BuiltInFunction::GetInstance()->FindVariable(name);
+	return FindVariable(HashFunction::String(name));
+}
+
+std::shared_ptr<Variable> Space::FindVariableFromTop(const std::string& name) const {
+	return FindVariableFromTop(HashFunction::String(name));
 }
 
 std::shared_ptr<Value> Space::FindVariableValue(const std::string& name) const {
@@ -151,6 +159,6 @@ SpaceType Space::GetSpaceType() const {
 	return _spaceType;
 }
 
-std::unordered_map<std::string, std::shared_ptr<Variable>>& Space::GetVariables() {
+std::unordered_map<std::size_t, std::shared_ptr<Variable>>& Space::GetVariables() {
 	return _variables;
 }

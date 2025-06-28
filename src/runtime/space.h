@@ -33,8 +33,13 @@ public:
 	void SetParent(std::shared_ptr<Space> parent);
 	void AddUsingSpace(std::shared_ptr<Space> space);
 	bool AddVariable(std::shared_ptr<Variable> value);
+
+	std::shared_ptr<Variable> FindVariable(std::size_t hashCode) const;
+	std::shared_ptr<Variable> FindVariableFromTop(std::size_t hashCode) const;
+
 	std::shared_ptr<Variable> FindVariable(const std::string& name) const;
 	std::shared_ptr<Variable> FindVariableFromTop(const std::string& name) const;
+
 	std::shared_ptr<Value> FindVariableValue(const std::string& name) const;
 	std::shared_ptr<ValueArray> FindVariableValueAsArray(const std::string& name) const;
 	std::shared_ptr<ValueBool> FindVariableValueAsBool(const std::string& name) const;
@@ -44,15 +49,14 @@ public:
 	std::shared_ptr<ValueObject> FindVariableValueAsObject(const std::string& name) const;
 	std::shared_ptr<ValueString> FindVariableValueAsString(const std::string& name) const;
 
-
 	SpaceType GetSpaceType() const;
-	std::unordered_map<std::string, std::shared_ptr<Variable>>& GetVariables();
+	std::unordered_map<std::size_t, std::shared_ptr<Variable>>& GetVariables();
 
 private:
 	SpaceType _spaceType { SpaceType::None };
 	std::shared_ptr<Space> _outSpace { nullptr };
 	std::shared_ptr<Space> _parent { nullptr };
-	std::list<std::shared_ptr<Space>> _usingSpace;
-	std::unordered_map<std::string, std::shared_ptr<Variable>> _variables;
+	std::vector<std::shared_ptr<Space>> _usingSpace;
+	std::unordered_map<std::size_t, std::shared_ptr<Variable>> _variables;
 };
 } // namespace peak

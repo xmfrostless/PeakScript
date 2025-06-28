@@ -23,10 +23,10 @@ class ExpressionVariableAnalysisName: public IExpressionVariableAnalysis {
 public:
 	ExpressionVariableAnalysisName(const std::string& name);
 	virtual std::shared_ptr<Variable> Execute(std::shared_ptr<Space> space);
-	void SetName(const std::string& name);
 
 private:
 	std::string _name;
+	std::size_t _hashCode { 0 };
 };
 
 class ExpressionVariableAnalysisArrayItem: public IExpressionVariableAnalysis {

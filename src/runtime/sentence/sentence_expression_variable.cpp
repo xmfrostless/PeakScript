@@ -4,8 +4,8 @@
 
 using namespace peak;
 
-SentenceExpressionVariable::SentenceExpressionVariable(std::shared_ptr<IExpressionVariableAnalysis> variableAnalysis)
-	: _analysis(variableAnalysis) {
+SentenceExpressionVariable::SentenceExpressionVariable(std::unique_ptr<IExpressionVariableAnalysis> variableAnalysis)
+	: _analysis(std::move(variableAnalysis)) {
 }
 
 ExecuteResult SentenceExpressionVariable::Execute(std::shared_ptr<Space> space) {

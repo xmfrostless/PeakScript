@@ -57,13 +57,12 @@ std::shared_ptr<Module> BuiltModuleTime::CreateModule() {
         auto second = std::make_shared<ValueNumber>(static_cast<double>(now_tm.tm_sec));
 
         auto ret = std::static_pointer_cast<ValueObject>(date_time->Clone());
-        auto& variables = ret->GetSpace()->GetVariables();
-        variables["year"]->SetValue(year);
-        variables["month"]->SetValue(month);
-        variables["day"]->SetValue(day);
-        variables["hour"]->SetValue(hour);
-        variables["minute"]->SetValue(minute);
-        variables["second"]->SetValue(second);
+        ret->UpdateValue("year", year);
+        ret->UpdateValue("month", month);
+        ret->UpdateValue("day", day);
+        ret->UpdateValue("hour", hour);
+        ret->UpdateValue("minute", minute);
+        ret->UpdateValue("second", second);
         return ret;
     });
     _InsertFunction(space, "get_local_time", 0, [date_time](const std::vector<std::shared_ptr<Value>>&, std::shared_ptr<Space>) -> std::shared_ptr<Value> {
@@ -88,13 +87,12 @@ std::shared_ptr<Module> BuiltModuleTime::CreateModule() {
         auto second = std::make_shared<ValueNumber>(static_cast<double>(now_tm.tm_sec));
 
         auto ret = std::static_pointer_cast<ValueObject>(date_time->Clone());
-        auto& variables = ret->GetSpace()->GetVariables();
-        variables["year"]->SetValue(year);
-        variables["month"]->SetValue(month);
-        variables["day"]->SetValue(day);
-        variables["hour"]->SetValue(hour);
-        variables["minute"]->SetValue(minute);
-        variables["second"]->SetValue(second);
+        ret->UpdateValue("year", year);
+        ret->UpdateValue("month", month);
+        ret->UpdateValue("day", day);
+        ret->UpdateValue("hour", hour);
+        ret->UpdateValue("minute", minute);
+        ret->UpdateValue("second", second);
         return ret;
     });
 

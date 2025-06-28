@@ -7,11 +7,11 @@
 
 #include "sentence.h"
 
-namespace peak { 
+namespace peak {
 
 class SentenceExpression;
 
-class SentenceVariableSet : public Sentence {
+class SentenceVariableSet: public Sentence {
 	MAKE_NON_COPYABLE(SentenceVariableSet);
 public:
 	SentenceVariableSet(const std::string& name, std::unique_ptr<SentenceExpression> expression);
@@ -19,7 +19,8 @@ public:
 
 private:
 	std::string _name;
-	std::unique_ptr<SentenceExpression> _expression{nullptr};
+	std::size_t _hashCode { 0 };
+	std::unique_ptr<SentenceExpression> _expression { nullptr };
 };
 
 } // namespace peak

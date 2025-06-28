@@ -6,6 +6,7 @@ using namespace peak;
 
 SentenceVariableDefine::SentenceVariableDefine(const std::string& name, VariableAttribute attribute, std::unique_ptr<SentenceExpression> expression)
 	: _name(name), _attribute(attribute), _expression(std::move(expression)) {
+	_hashCode = HashFunction::String(_name);
 }
 
 ExecuteResult SentenceVariableDefine::Execute(std::shared_ptr<Space> space) {
@@ -24,7 +25,7 @@ ExecuteResult SentenceVariableDefine::Execute(std::shared_ptr<Space> space) {
 			return ExecuteResult::Failed;
 		}
 	}
-	_variable = std::make_shared<Variable>(_name, _attribute, value);
+	_variable = std::make_shared<Variable>(_name, _hashCode, _attribute, value);
 	if (!space->AddVariable(_variable)) {
 		ErrorLogger::LogRuntimeError(_name);
 		ErrorLogger::LogRuntimeError(ErrorRuntimeCode::VariableDefine, "The variable \"" + _name + "\" is exist!");

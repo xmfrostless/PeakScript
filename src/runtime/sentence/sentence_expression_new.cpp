@@ -6,10 +6,11 @@ using namespace peak;
 
 SentenceExpressionNew::SentenceExpressionNew(const std::string& name)
 	: _name(name) {
+	_hashCode = HashFunction::String(_name);
 }
 
 ExecuteResult SentenceExpressionNew::Execute(std::shared_ptr<Space> space) {
-	auto variable = space->FindVariable(_name);
+	auto variable = space->FindVariable(_hashCode);
 	if (!variable) {
 		ErrorLogger::LogRuntimeError(_name);
 		ErrorLogger::LogRuntimeError(ErrorRuntimeCode::New, "The \"" + _name + "\" not found!");

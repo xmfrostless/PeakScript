@@ -8,6 +8,7 @@ using namespace peak;
 
 SentenceFunctionDefine::SentenceFunctionDefine(const std::string& name, const std::vector<std::string>& params, std::unique_ptr<Sentence> content)
 	: _name(name), _params(params), _content(std::move(content)) {
+	_hashCode = HashFunction::String(_name);
 }
 ExecuteResult SentenceFunctionDefine::Execute(std::shared_ptr<Space> space) {
 	auto func = [this](const std::vector<std::shared_ptr<Value>>&, std::shared_ptr<Space> space) -> std::shared_ptr<Value> {
@@ -21,13 +22,13 @@ ExecuteResult SentenceFunctionDefine::Execute(std::shared_ptr<Space> space) {
 		return std::make_shared<ValueNull>();
 	};
 
-	auto variable = space->FindVariableFromTop(_name);
+	auto variable = space->FindVariableFromTop(_hashCode);
 	if (variable) {
 		ErrorLogger::LogRuntimeError(_name);
 		ErrorLogger::LogRuntimeError(ErrorRuntimeCode::FunctionDefine, "The \"" + _name + "\" is exist!");
 		return ExecuteResult::Failed;
 	} else {
-		variable = std::make_shared<Variable>(_name, VariableAttribute::None);
+		variable = std::make_shared<Variable>(_name, _hashCode, VariableAttribute::None);
 		auto value = std::make_shared<ValueFunction>(_params, func);
 		variable->SetValue(value);
 		space->AddVariable(variable);

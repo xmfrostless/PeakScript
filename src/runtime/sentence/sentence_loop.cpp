@@ -7,6 +7,7 @@ using namespace peak;
 
 SentenceLoop::SentenceLoop(const std::string& indexParam, std::unique_ptr<SentenceExpression> condition, std::unique_ptr<Sentence> sentence)
 	: _indexParam(indexParam), _condition(std::move(condition)), _sentence(std::move(sentence)) {
+	_indexParamHashCode = HashFunction::String(_indexParam);
 }
 ExecuteResult SentenceLoop::Execute(std::shared_ptr<Space> space) {
 	if (!IsSuccess(_condition->Execute(space))) {
@@ -34,7 +35,7 @@ ExecuteResult SentenceLoop::Execute(std::shared_ptr<Space> space) {
 		}
 	} else {
 		tempSpace->Clear();
-		auto indexVariable = std::make_shared<Variable>(_indexParam, VariableAttribute::None);
+		auto indexVariable = std::make_shared<Variable>(_indexParam, _indexParamHashCode, VariableAttribute::None);
 		if (!tempSpace->AddVariable(indexVariable)) {
 			ErrorLogger::LogRuntimeError(_indexParam);
 			ErrorLogger::LogRuntimeError(ErrorRuntimeCode::Loop, "The variable \"" + _indexParam + "\" is exist!");

@@ -6,10 +6,11 @@ using namespace peak;
 
 SentenceExpressionFunctionCall::SentenceExpressionFunctionCall(const std::string& name, std::vector<std::unique_ptr<SentenceExpression>> args)
 	: _name(name), _args(std::move(args)) {
+	_hashCode = HashFunction::String(_name);
 }
 
 ExecuteResult SentenceExpressionFunctionCall::ExecuteFromInside(std::shared_ptr<Space> objSpace, std::shared_ptr<Space> space) {
-	auto variable = objSpace->FindVariable(_name);
+	auto variable = objSpace->FindVariable(_hashCode);
 	if (!variable) {
 		ErrorLogger::LogRuntimeError(_name);
 		ErrorLogger::LogRuntimeError(ErrorRuntimeCode::FunctionCall, "Can't found function \"" + _name + "\"!");

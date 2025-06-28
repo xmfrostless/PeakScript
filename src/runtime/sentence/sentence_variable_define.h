@@ -8,11 +8,11 @@
 #include "runtime/variable.h"
 #include "sentence.h"
 
-namespace peak { 
+namespace peak {
 
 class SentenceExpression;
 
-class SentenceVariableDefine : public Sentence {
+class SentenceVariableDefine: public Sentence {
 	MAKE_NON_COPYABLE(SentenceVariableDefine);
 public:
 	SentenceVariableDefine(const std::string& name, VariableAttribute attribute, std::unique_ptr<SentenceExpression> expression = nullptr);
@@ -20,9 +20,10 @@ public:
 
 private:
 	std::string _name;
-	VariableAttribute _attribute{VariableAttribute::None};
-	std::shared_ptr<Variable> _variable{nullptr};
-	std::unique_ptr<SentenceExpression> _expression{nullptr};
+	std::size_t _hashCode { 0 };
+	VariableAttribute _attribute { VariableAttribute::None };
+	std::shared_ptr<Variable> _variable { nullptr };
+	std::unique_ptr<SentenceExpression> _expression { nullptr };
 };
 
 } // namespace peak

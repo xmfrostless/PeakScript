@@ -7,10 +7,10 @@
 
 #include "sentence_expression.h"
 
-namespace peak { 
+namespace peak {
 
 
-class SentenceExpressionFunctionCall : public SentenceExpression {
+class SentenceExpressionFunctionCall: public SentenceExpression {
 	MAKE_NON_COPYABLE(SentenceExpressionFunctionCall);
 public:
 	SentenceExpressionFunctionCall(const std::string& name, std::vector<std::unique_ptr<SentenceExpression>> args);
@@ -24,6 +24,7 @@ public:
 
 private:
 	std::string _name;
+	std::size_t _hashCode { 0 };
 	std::vector<std::unique_ptr<SentenceExpression>> _args;
 };
 

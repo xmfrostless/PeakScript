@@ -8,17 +8,15 @@ using namespace peak;
 
 ExpressionVariableAnalysisName::ExpressionVariableAnalysisName(const std::string& name)
 	: _name(name) {
+	_hashCode = HashFunction::String(_name);
 }
 std::shared_ptr<Variable> ExpressionVariableAnalysisName::Execute(std::shared_ptr<Space> space) {
-	auto ret = space->FindVariable(_name);
+	auto ret = space->FindVariable(_hashCode);
 	if (!ret) {
 		ErrorLogger::LogRuntimeError(_name);
 		ErrorLogger::LogRuntimeError(ErrorRuntimeCode::VariableNameAnalysis, "The variable \"" + _name + "\" not found!");
 	}
 	return ret;
-}
-void ExpressionVariableAnalysisName::SetName(const std::string& name) {
-	_name = name;
 }
 
 ExpressionVariableAnalysisArrayItem::ExpressionVariableAnalysisArrayItem(std::unique_ptr<SentenceExpression> valueExpression, std::vector<std::unique_ptr<SentenceExpression>> indexExpressionVec)
@@ -75,7 +73,7 @@ std::shared_ptr<Variable> ExpressionVariableAnalysisArrayItem::Execute(std::shar
 				ErrorLogger::LogRuntimeError(ErrorRuntimeCode::VariableArrayItemAnalysis, "The index out of range!");
 				return nullptr;
 			}
-			retVariable = std::make_shared<Variable>("", VariableAttribute::None);
+			retVariable = std::make_shared<Variable>("", 0u, VariableAttribute::None);
 			retValue = std::make_shared<ValueString>(std::string() + str[index]);
 			retVariable->SetValue(retValue);
 		} else {
@@ -116,7 +114,7 @@ std::shared_ptr<Variable> ExpressionVariableAnalysisInside::Execute(std::shared_
 				ErrorLogger::LogRuntimeError(ErrorRuntimeCode::VariableInsideAnalysis, "The inside expression execute failed!");
 				return nullptr;
 			}
-			retVariable = std::make_shared<Variable>("", VariableAttribute::Const);
+			retVariable = std::make_shared<Variable>("", 0u, VariableAttribute::Const);
 		} else if (expressionType == ExpressionType::Variable) {
 			executeRet = expression->Execute(objSpace);
 			if (!Sentence::IsSuccess(executeRet)) {

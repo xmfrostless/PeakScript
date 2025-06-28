@@ -10,7 +10,7 @@
 namespace peak {
 
 
-class SentenceImport : public Sentence {
+class SentenceImport: public Sentence {
 	MAKE_NON_COPYABLE(SentenceImport);
 public:
 	SentenceImport(const std::string& moduleName, const std::string& alias);
@@ -19,6 +19,7 @@ public:
 private:
 	std::string _moduleName;
 	std::string _alias;
+	std::size_t _aliasHashCode { 0 };
 };
 
 

@@ -4,14 +4,16 @@
 
 using namespace peak;
 
-SentenceObjectDefine::SentenceObjectDefine(const std::string& name, const std::string& parentName, std::list<std::unique_ptr<Sentence>> sentenceList)
+SentenceObjectDefine::SentenceObjectDefine(const std::string& name, const std::string& parentName, std::vector<std::unique_ptr<Sentence>> sentenceList)
 	: _name(name), _parentName(parentName), _sentenceList(std::move(sentenceList)) {
+	_hashCode = HashFunction::String(_name);
+	_parentHashCode = HashFunction::String(_parentName);
 }
 
 ExecuteResult SentenceObjectDefine::Execute(std::shared_ptr<Space> space) {
-	std::shared_ptr<ValueObject> parentObject{nullptr};
+	std::shared_ptr<ValueObject> parentObject { nullptr };
 	if (!_parentName.empty()) {
-		auto parentVariable = space->FindVariable(_parentName);
+		auto parentVariable = space->FindVariable(_parentHashCode);
 		if (!parentVariable) {
 			ErrorLogger::LogRuntimeError(_parentName);
 			ErrorLogger::LogRuntimeError(_name);
@@ -37,7 +39,7 @@ ExecuteResult SentenceObjectDefine::Execute(std::shared_ptr<Space> space) {
 		}
 	}
 
-	if (!space->AddVariable(std::make_shared<Variable>(_name, VariableAttribute::None, valueObject))) {
+	if (!space->AddVariable(std::make_shared<Variable>(_name, _hashCode, VariableAttribute::None, valueObject))) {
 		ErrorLogger::LogRuntimeError(_name);
 		ErrorLogger::LogRuntimeError(ErrorRuntimeCode::ObjectDefine, "The object \"" + _name + "\" is exist!");
 		return ExecuteResult::Failed;

@@ -12,7 +12,7 @@ namespace peak {
 
 class Variable;
 
-class SentenceFunctionDefine : public Sentence {
+class SentenceFunctionDefine: public Sentence {
 	MAKE_NON_COPYABLE(SentenceFunctionDefine);
 public:
 	SentenceFunctionDefine(const std::string& name, const std::vector<std::string>& params, std::unique_ptr<Sentence> content);
@@ -20,8 +20,9 @@ public:
 
 private:
 	std::string _name;
+	std::size_t _hashCode { 0 };
 	std::vector<std::string> _params;
-	std::unique_ptr<Sentence> _content{nullptr};
+	std::unique_ptr<Sentence> _content { nullptr };
 };
 
 } // namespace peak
