@@ -30,7 +30,7 @@ ExecuteResult SentenceImport::Execute(std::shared_ptr<Space> space) {
 			return ExecuteResult::Failed;
 		}
 	} else {
-		space->AddSpaceOfUsing(module->GetSpace());
+		space->AddUsingSpace(module->GetSpace());
 	}
 
 	return ExecuteResult::Successed;

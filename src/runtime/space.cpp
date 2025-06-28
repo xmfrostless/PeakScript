@@ -11,17 +11,14 @@ using namespace peak;
 Space::Space(SpaceType spaceType)
 	: _spaceType(spaceType) {
 }
-Space::Space(SpaceType spaceType, std::shared_ptr<Space> parent)
-	: _spaceType(spaceType), _parent(parent) {
+Space::Space(SpaceType spaceType, std::shared_ptr<Space> outSpace)
+	: _spaceType(spaceType), _outSpace(outSpace) {
 }
 
 std::shared_ptr<Space> Space::CopySpace() const {
-	std::shared_ptr<Space> parent { nullptr };
-	if (_parent) {
-		parent = _parent->CopySpace();
-	}
-	auto space = std::make_shared<Space>(_spaceType, parent);
-	space->_spaceOfUsing = _spaceOfUsing;
+	auto space = std::make_shared<Space>(_spaceType);
+	space->SetParent(_parent ? _parent->CopySpace() : nullptr);
+	space->_usingSpace = _usingSpace;
 
 	for (auto& pair : _variables) {
 		space->_variables.emplace(pair.first, pair.second->Clone());
@@ -31,7 +28,17 @@ std::shared_ptr<Space> Space::CopySpace() const {
 
 void Space::Clear() {
 	_variables.clear();
-	_spaceOfUsing.clear();
+	_usingSpace.clear();
+}
+
+void Space::SetParent(std::shared_ptr<Space> parent) {
+	this->_parent = parent;
+}
+
+void Space::AddUsingSpace(std::shared_ptr<Space> space) {
+	if (space) {
+		_usingSpace.emplace_back(space);
+	}
 }
 
 bool Space::AddVariable(std::shared_ptr<Variable> value) {
@@ -67,7 +74,13 @@ std::shared_ptr<Variable> Space::FindVariable(const std::string& name) const {
 			return ret;
 		}
 	}
-	for (auto space : _spaceOfUsing) {
+	if (_outSpace) {
+		auto ret = _outSpace->FindVariable(name);
+		if (ret) {
+			return ret;
+		}
+	}
+	for (auto space : _usingSpace) {
 		auto find = space->FindVariable(name);
 		if (find) {
 			return find;
@@ -140,8 +153,4 @@ SpaceType Space::GetSpaceType() const {
 
 std::unordered_map<std::string, std::shared_ptr<Variable>>& Space::GetVariables() {
 	return _variables;
-}
-
-void Space::AddSpaceOfUsing(std::shared_ptr<Space> space) {
-	_spaceOfUsing.emplace_back(space);
 }

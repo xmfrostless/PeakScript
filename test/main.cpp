@@ -10,9 +10,9 @@ void add_search_path(const std::filesystem::path& path) {
 
 int main(int, char** argv) {
 	auto path = std::filesystem::path(argv[0]);
-	add_search_path(path);
 	add_search_path(path.parent_path());
 	add_search_path(path.parent_path().parent_path());
+	add_search_path(path.parent_path().parent_path().parent_path());
 	auto script = peak::Script::LoadFile("./test_main.peak");
 	if (script) {
 		script->Execute();

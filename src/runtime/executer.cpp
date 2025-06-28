@@ -26,7 +26,7 @@ Executer::~Executer() {
 
 bool Executer::Execute() {
 	_space->Clear();
-	_space->AddSpaceOfUsing(_outsideSpace);
+	_space->AddUsingSpace(_outsideSpace);
 	for (auto& sentence : _parseData->sentenceList) {
 		if (!Sentence::IsSuccess(sentence->Execute(_space))) {
 			return false;

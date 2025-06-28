@@ -32,10 +32,8 @@ void ModulePool::RemoveModule(const std::string& moduleName) {
 
 std::shared_ptr<Module> ModulePool::UseModule(const std::string& moduleName) {
 	std::shared_ptr<Module> retModule { nullptr };
-	std::string saveKey;
 	auto ite = _modulesMap.find(moduleName);
 	if (ite != _modulesMap.end()) {
-		saveKey = moduleName;
 		retModule = ite->second;
 	} else {
 		std::string absPath;
@@ -44,13 +42,11 @@ std::shared_ptr<Module> ModulePool::UseModule(const std::string& moduleName) {
 			auto srcIte = _modulesMap.find(absPath);
 			if (srcIte != _modulesMap.end()) {
 				retModule = srcIte->second;
-				saveKey = std::move(absPath);
 			} else {
 				auto executer = Executer::Create(src);
 				if (executer) {
 					retModule = std::make_shared<Module>(std::move(executer));
 					_modulesMap.emplace(absPath, retModule);
-					saveKey = std::move(absPath);
 				}
 			}
 		}
@@ -63,9 +59,6 @@ std::shared_ptr<Module> ModulePool::UseModule(const std::string& moduleName) {
 	}
 	if (!retModule->IsExecuted()) {
 		if (!retModule->Execute()) {
-			if (!saveKey.empty()) {
-				_modulesMap.erase(saveKey);
-			}
 			return nullptr;
 		}
 	}
