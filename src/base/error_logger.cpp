@@ -1,9 +1,11 @@
 #include "error_logger.h"
+#include <sstream>
+#include <regex>
 
 using namespace peak;
 
 std::function<void(const std::string&)> ErrorLogger::_logger = [](const std::string& message) {
-	std::cout << message << std::endl;
+	std::cerr << "\a" << "\033[31m" << message << "\033[0m" << std::endl;
 };
 
 std::unordered_map<ErrorRuntimeCode, std::string> ErrorLogger::_errorCodeNameMap = {
@@ -51,20 +53,23 @@ void ErrorLogger::Log(const std::string& message) {
 
 void ErrorLogger::LogParseError(const std::string& src, std::size_t size, std::size_t pos) {
 	std::size_t lineNum = 0;
-	std::size_t save0 = 0;
-	std::size_t save1 = 0;
+	std::size_t left = 0;
+	std::size_t right = 0;
 	for (std::size_t i = 0; i < size; ++i) {
 		if ((src[i] == '\n') || (i == size - 1)) {
 			++lineNum;
 			if (i >= pos) {
-				save1 = i + 1;
+				right = i;
 				break;
 			}
-			save0 = i + 1;
-			save1 = save0;
+			left = i + 1;
+			right = left;
 		}
 	}
-	Log("[" + std::to_string(lineNum) + "," + std::to_string(save1 - save0) + "]: " + src.substr(save0, save1 - save0));
+	auto line = std::regex_replace(src.substr(left, right - left), std::regex("^\\s+|\\s+$"), "");
+	std::ostringstream oss;
+	oss << "|line:" << std::setw(3) << std::setfill(' ') << std::right << lineNum << "|: " << line;
+	Log(oss.str());
 }
 
 void ErrorLogger::LogRuntimeError(ErrorRuntimeCode code, const std::string& desc) {

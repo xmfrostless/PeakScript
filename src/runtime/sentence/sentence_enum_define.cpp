@@ -22,10 +22,10 @@ ExecuteResult SentenceEnumDefine::Execute(std::shared_ptr<Space> space) {
 		return ExecuteResult::Failed;
 	}
 	auto valueSpace = valueObject->GetSpace();
-	for (auto& tu : _valueList) {
-		auto valueVariable = std::make_shared<Variable>(std::get<0>(tu), std::get<1>(tu), VariableAttribute::Const, std::get<2>(tu));
+	for (auto& [key, code, value] : _valueList) {
+		auto valueVariable = std::make_shared<Variable>(key, code, VariableAttribute::Const, value);
 		if (!valueSpace->AddVariable(valueVariable)) {
-			ErrorLogger::LogRuntimeError(std::get<0>(tu));
+			ErrorLogger::LogRuntimeError(key);
 			ErrorLogger::LogRuntimeError(_name);
 			ErrorLogger::LogRuntimeError(ErrorRuntimeCode::EnumDefine, "The item name \"" + _name + "\" is exist!");
 			return ExecuteResult::Failed;

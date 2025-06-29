@@ -111,7 +111,6 @@ std::unique_ptr<ParseData> Parse::Load(const std::string& src) {
 		auto parseSentence = ParseSentence(src, size, pos, &pos);
 		if (!parseSentence) {
 			retData->bSuccess = false;
-			ErrorLogger::LogParseError(src, size, pos);
 			break;
 		}
 		retData->sentenceList.emplace_back(std::move(parseSentence));
@@ -223,6 +222,7 @@ std::unique_ptr<Sentence> Parse::ParseSentence(const std::string& src, std::size
 			return parseData;
 		}
 	}
+	ErrorLogger::LogParseError(src, size, pos);
 	return nullptr;
 }
 

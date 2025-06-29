@@ -11,17 +11,6 @@ SentenceFunctionDefine::SentenceFunctionDefine(const std::string& name, const st
 	_hashCode = HashFunction::String(_name);
 }
 ExecuteResult SentenceFunctionDefine::Execute(std::shared_ptr<Space> space) {
-	auto func = [this](const std::vector<std::shared_ptr<Value>>&, std::shared_ptr<Space> space) -> std::shared_ptr<Value> {
-		auto result = _content->Execute(space);
-		if (!IsSuccess(result)) {
-			return nullptr;
-		}
-		if (result == ExecuteResult::Return) {
-			return static_cast<SentenceReturn*>(_content.get())->GetReturnValue();
-		}
-		return std::make_shared<ValueNull>();
-	};
-
 	auto variable = space->GetVariableInSelf(_hashCode);
 	if (variable) {
 		ErrorLogger::LogRuntimeError(_name);
@@ -29,10 +18,21 @@ ExecuteResult SentenceFunctionDefine::Execute(std::shared_ptr<Space> space) {
 		return ExecuteResult::Failed;
 	} else {
 		variable = std::make_shared<Variable>(_name, _hashCode, VariableAttribute::None);
-		auto value = std::make_shared<ValueFunction>(_params, func);
+		auto value = std::make_shared<ValueFunction>(_params, std::bind(&SentenceFunctionDefine::_FunctionCallback, this, std::placeholders::_1, std::placeholders::_2));
 		variable->SetValue(value);
 		space->AddVariable(variable);
 	}
 
 	return ExecuteResult::Successed;
+}
+
+std::shared_ptr<Value> SentenceFunctionDefine::_FunctionCallback(const std::vector<std::shared_ptr<Value>>&, std::shared_ptr<Space> space) {
+	auto result = _content->Execute(space);
+	if (!IsSuccess(result)) {
+		return nullptr;
+	}
+	if (result == ExecuteResult::Return) {
+		return static_cast<SentenceReturn*>(_content.get())->GetReturnValue();
+	}
+	return std::make_shared<ValueNull>();
 }

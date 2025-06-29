@@ -43,7 +43,12 @@ enum class ErrorRuntimeCode {
 	Inside,
 	EnumDefine,
 	Import,
-	Export,
+};
+
+enum class RuntimeCodeEx {
+	None = 0,
+	Import_Not_Found,
+	Import_Execute_Error,
 };
 
 class ErrorLogger {

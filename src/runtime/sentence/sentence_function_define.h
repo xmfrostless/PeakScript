@@ -9,14 +9,17 @@
 
 namespace peak {
 
-
 class Variable;
+class Value;
 
 class SentenceFunctionDefine: public Sentence {
 	MAKE_NON_COPYABLE(SentenceFunctionDefine);
 public:
 	SentenceFunctionDefine(const std::string& name, const std::vector<std::string>& params, std::unique_ptr<Sentence> content);
 	virtual ExecuteResult Execute(std::shared_ptr<Space> space);
+
+private:
+	std::shared_ptr<Value> _FunctionCallback(const std::vector<std::shared_ptr<Value>>&, std::shared_ptr<Space> space);
 
 private:
 	std::string _name;

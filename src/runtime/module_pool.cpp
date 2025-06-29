@@ -30,7 +30,7 @@ void ModulePool::RemoveModule(const std::string& moduleName) {
 	}
 }
 
-std::shared_ptr<Module> ModulePool::UseModule(const std::string& moduleName) {
+std::tuple<RuntimeCodeEx, std::shared_ptr<Module>> ModulePool::UseModule(const std::string& moduleName) {
 	std::shared_ptr<Module> retModule { nullptr };
 	auto ite = _modulesMap.find(moduleName);
 	if (ite != _modulesMap.end()) {
@@ -47,20 +47,22 @@ std::shared_ptr<Module> ModulePool::UseModule(const std::string& moduleName) {
 				if (executer) {
 					retModule = std::make_shared<Module>(std::move(executer));
 					_modulesMap.emplace(absPath, retModule);
+				} else {
+					return { RuntimeCodeEx::Import_Execute_Error, nullptr };
 				}
+			}
+		} else {
+			retModule = BuiltinModule::GetInstance()->FindModule(moduleName);
+			if (!retModule) {
+				return { RuntimeCodeEx::Import_Not_Found, nullptr };
 			}
 		}
 	}
-	if (!retModule) {
-		retModule = BuiltinModule::GetInstance()->FindModule(moduleName);
-		if (!retModule) {
-			return nullptr;
-		}
-	}
+
 	if (!retModule->IsExecuted()) {
 		if (!retModule->Execute()) {
-			return nullptr;
+			return { RuntimeCodeEx::Import_Execute_Error, nullptr };
 		}
 	}
-	return retModule;
+	return { RuntimeCodeEx::None, retModule };
 }

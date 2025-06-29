@@ -18,7 +18,7 @@ int main(int, char** argv) {
         script->Execute();
         std::cout << "\n test over.\n" << std::endl;
     } else {
-        std::cout << "\nnot found: test_main.peak\n" << std::endl;
+        std::cout << "\nerror: test_main.peak\n" << std::endl;
     }
     getchar();
     return 0;

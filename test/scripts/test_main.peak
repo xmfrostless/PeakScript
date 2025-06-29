@@ -22,4 +22,5 @@ import "sentence_variable.peak";
 import "module.peak";
 
 import "example_sort.peak";
+import "example.peak";
 

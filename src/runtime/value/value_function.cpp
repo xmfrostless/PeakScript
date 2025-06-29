@@ -27,7 +27,8 @@ std::shared_ptr<Value> ValueFunction::Call(const std::vector<std::shared_ptr<Val
 
 	auto tempSpace = std::make_shared<Space>(SpaceType::Function, space);
 	for (std::size_t i = 0; i < args.size(); ++i) {
-		auto tempVariable = std::make_shared<Variable>(std::get<0>(_params[i]), std::get<1>(_params[i]), VariableAttribute::None);
+		auto& [key, code] = _params[i];
+		auto tempVariable = std::make_shared<Variable>(key, code, VariableAttribute::None);
 		if (!tempSpace->AddVariable(tempVariable)) {
 			ErrorLogger::LogRuntimeError(ErrorRuntimeCode::FunctionCall, "The function params name is exist!");
 			return nullptr;

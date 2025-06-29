@@ -16,10 +16,14 @@ ExecuteResult SentenceImport::Execute(std::shared_ptr<Space> space) {
 		ErrorLogger::LogRuntimeError(ErrorRuntimeCode::Import, "The module \"" + _moduleName + "\" can't import here!");
 		return ExecuteResult::Failed;
 	}
-	auto module = ModulePool::GetInstance()->UseModule(_moduleName);
+	auto [code, module] = ModulePool::GetInstance()->UseModule(_moduleName);
 	if (!module) {
 		ErrorLogger::LogRuntimeError(_moduleName);
-		ErrorLogger::LogRuntimeError(ErrorRuntimeCode::Import, "The module \"" + _moduleName + "\" not found!");
+		if (code == RuntimeCodeEx::Import_Not_Found) {
+			ErrorLogger::LogRuntimeError(ErrorRuntimeCode::Import, "The module \"" + _moduleName + "\" not found!");
+		} else if (code == RuntimeCodeEx::Import_Execute_Error) {
+			ErrorLogger::LogRuntimeError(ErrorRuntimeCode::Import, "The module \"" + _moduleName + "\" execute error!");
+		}
 		return ExecuteResult::Failed;
 	}
 
