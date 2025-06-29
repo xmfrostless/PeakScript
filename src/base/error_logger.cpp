@@ -3,7 +3,7 @@
 using namespace peak;
 
 std::function<void(const std::string&)> ErrorLogger::_logger = [](const std::string& message) {
-	std::cerr << "\a" << "\033[31m" << message << "\033[0m" << std::endl;
+	std::cerr << "\033[31m" << message << "\033[0m" << std::endl;
 };
 
 std::unordered_map<ErrorRuntimeCode, std::string> ErrorLogger::_errorCodeNameMap = {
