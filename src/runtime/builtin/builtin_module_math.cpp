@@ -4,7 +4,6 @@
 #include "runtime/variable.h"
 #include "runtime/value/value_tool.h"
 #include "runtime/system.h"
-#include <cmath>
 
 using namespace peak;
 
@@ -27,6 +26,14 @@ std::shared_ptr<Module> BuiltModuleMath::CreateModule() {
             return nullptr;
         }
         return std::make_shared<ValueNumber>(std::sqrt(value));
+    });
+    _InsertFunction(space, "pow", 2, [](const std::vector<std::shared_ptr<Value>>& args, std::shared_ptr<Space>) -> std::shared_ptr<Value> {
+        if (!ValueTool::IsNumber(args[0].get()) || !ValueTool::IsNumber(args[1].get())) {
+            return nullptr;
+        }
+        const auto& a = std::static_pointer_cast<ValueNumber>(args[0])->GetValue();
+        const auto& b = std::static_pointer_cast<ValueNumber>(args[1])->GetValue();
+        return std::make_shared<ValueNumber>(std::pow(a, b));
     });
 
     _InsertFunction(space, "min", 2, [](const std::vector<std::shared_ptr<Value>>& args, std::shared_ptr<Space>) -> std::shared_ptr<Value> {
@@ -90,7 +97,7 @@ std::shared_ptr<Module> BuiltModuleMath::CreateModule() {
         const auto& num = std::static_pointer_cast<ValueNumber>(args[0])->GetValue();
         return std::make_shared<ValueNumber>(std::round(num));
     });
-    
+
     _InsertFunction(space, "abs", 1, [](const std::vector<std::shared_ptr<Value>>& args, std::shared_ptr<Space>) -> std::shared_ptr<Value> {
         if (!ValueTool::IsNumber(args[0].get())) {
             return nullptr;

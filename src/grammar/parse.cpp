@@ -63,6 +63,7 @@ Parse::ExpressionParseList Parse::_sentenceValueParseList = {
 	_ParseArray,
 	_ParseDoubleExpression,
 	_ParseNotExpression,
+	_ParseNegativeExpression,
 	_ParseFunctioCall,
 	_ParseVariableName,
 	_ParseNew,
@@ -386,8 +387,8 @@ std::unique_ptr<Sentence> Parse::_ParseEnumDefine(const std::string& src, std::s
 	if (!Syntax::MatchObjectBegin(src, size, pos, &pos)) {
 		return nullptr;
 	}
-	std::set<std::string> checkNameSet;
-	std::set<double> checkValueSet;
+	std::unordered_set<std::string> checkNameSet;
+	std::unordered_set<double> checkValueSet;
 	std::vector<std::pair<std::string, std::shared_ptr<ValueNumber>>> valueList;
 	double indexValue = 0;
 	while (true) {
@@ -1102,13 +1103,18 @@ std::unique_ptr<SentenceExpression> Parse::_ParseDoubleExpression(const std::str
 	DoubleSymbol symbol;
 	bool bDouble = Syntax::MatchDoubleSymbol(src, size, pos, &pos, &symbol);
 	bool bLast = !bDouble;
+	Jump(src, size, pos, &pos);
 	auto variableSentence = _ParseVariable(src, size, pos, &pos);
 	if (!variableSentence) {
 		return nullptr;
 	}
-	if (!bDouble && !Syntax::MatchDoubleSymbol(src, size, pos, &pos, &symbol)) {
-		return nullptr;
+	if (!bDouble) {
+		Jump(src, size, pos, &pos);
+		if (!Syntax::MatchDoubleSymbol(src, size, pos, &pos, &symbol)) {
+			return nullptr;
+		}
 	}
+
 	auto calculate = _GetCalculate(symbol);
 	if (!calculate) {
 		return nullptr;
@@ -1117,19 +1123,45 @@ std::unique_ptr<SentenceExpression> Parse::_ParseDoubleExpression(const std::str
 	return std::make_unique<SentenceExpressionDouble>(std::move(variableSentence), calculate, bLast);
 }
 
+std::unique_ptr<SentenceExpression> Parse::_ParseNegativeExpression(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
+	MathSymbol symbol = MathSymbol::None;
+	if (!Syntax::MatchMathSymbol(src, size, pos, &pos, &symbol)) {
+		return nullptr;
+	}
+	if (symbol != MathSymbol::Sub) {
+		return nullptr;
+	}
+	Jump(src, size, pos, &pos);
+	std::unique_ptr<SentenceExpression> expression { nullptr };
+	if (Syntax::MatchLeftBrcket(src, size, pos, &pos)) {
+		expression = _ParseExpressionMathBracket(src, size, pos, &pos, true);
+	} else {
+		expression = _ParseExpressionValue(src, size, pos, &pos);
+	}
+	if (!expression) {
+		return nullptr;
+	}
+	*nextPos = pos;
+	return std::make_unique<SentenceExpressionMath>(
+		std::make_unique<SentenceExpression>(std::make_shared<ValueNumber>(0)),
+		std::move(expression),
+		_GetCalculate(symbol)
+	);
+}
+
 std::unique_ptr<SentenceExpression> Parse::_ParseNotExpression(const std::string& src, std::size_t size, std::size_t pos, std::size_t* nextPos) {
 	if (!Syntax::MatchNotSymbol(src, size, pos, &pos)) {
 		return nullptr;
 	}
-	auto expression = _ParseExpressionValue(src, size, pos, &pos);
-	if (!expression) {
-		if (!Syntax::MatchLeftBrcket(src, size, pos, &pos)) {
-			return nullptr;
-		}
+	Jump(src, size, pos, &pos);
+	std::unique_ptr<SentenceExpression> expression { nullptr };
+	if (Syntax::MatchLeftBrcket(src, size, pos, &pos)) {
 		expression = _ParseExpressionMathBracket(src, size, pos, &pos, true);
-		if (!expression) {
-			return nullptr;
-		}
+	} else {
+		expression = _ParseExpressionValue(src, size, pos, &pos);
+	}
+	if (!expression) {
+		return nullptr;
 	}
 	*nextPos = pos;
 	return std::make_unique<SentenceExpressionNot>(std::move(expression));

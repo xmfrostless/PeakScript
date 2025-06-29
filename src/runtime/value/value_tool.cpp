@@ -76,8 +76,10 @@ bool ValueTool::Equal(Value* a, Value* b) {
 			static_cast<ValueBool*>(b)->GetValue();
 	}
 	if (IsNumber(a)) {
-		return static_cast<ValueNumber*>(a)->GetValue() ==
-			static_cast<ValueNumber*>(b)->GetValue();
+		return fabs(
+			static_cast<ValueNumber*>(a)->GetValue() -
+			static_cast<ValueNumber*>(b)->GetValue()
+		) <= DBL_EPSILON;
 	}
 	if (IsString(a)) {
 		return static_cast<ValueString*>(a)->GetValue() ==
@@ -94,8 +96,8 @@ bool ValueTool::More(Value* a, Value* b) {
 		return false;
 	}
 	if (IsNumber(a)) {
-		return static_cast<ValueNumber*>(a)->GetValue() >
-			static_cast<ValueNumber*>(b)->GetValue();
+		return static_cast<ValueNumber*>(a)->GetValue() -
+			static_cast<ValueNumber*>(b)->GetValue() > DBL_EPSILON;
 	}
 	if (IsString(a)) {
 		return static_cast<ValueString*>(a)->GetValue() >

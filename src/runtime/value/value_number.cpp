@@ -10,7 +10,7 @@ double ValueNumber::GetValue() const {
 	return _value;
 }
 std::string ValueNumber::ToString() const {
-	std::array<char, 64> buffer;
+	std::array<char, 32> buffer;
 	auto [ptr, ec] = std::to_chars(buffer.data(), buffer.data() + buffer.size(), _value, std::chars_format::fixed);
 	if (ec != std::errc()) {
 		return "0";

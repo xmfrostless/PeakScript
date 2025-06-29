@@ -9,11 +9,6 @@ static const std::unordered_set<char> SIGN_STRING = { '\"', '\'', '`' };
 static const std::vector<std::string> SIGN_COMMENT = { "//", "#" };
 static const std::vector<std::string> SIGN_EXTENDS = { ":", "extends" };
 static const std::unordered_map<MathSymbol, std::pair<int, std::vector<std::string>>> SIGN_MAP_MATH_SYMBOL = {
-	{MathSymbol::AssignMul, {110, {"*="}}},
-	{MathSymbol::AssignDiv, {110, {"/="}}},
-	{MathSymbol::AssignMod, {110, {"%="}}},
-	{MathSymbol::AssignAdd, {110, {"+="}}},
-	{MathSymbol::AssignSub, {110, {"-="}}},
 	{MathSymbol::Mul, {100, {"*"}}},
 	{MathSymbol::Div, {100, {"/"}}},
 	{MathSymbol::Mod, {100, {"%"}}},
@@ -27,6 +22,11 @@ static const std::unordered_map<MathSymbol, std::pair<int, std::vector<std::stri
 	{MathSymbol::NotEqual, {70, {"!="}}},
 	{MathSymbol::LogicAnd, {60, {"&&", "and"}}},
 	{MathSymbol::LogicOr, {60, {"||", "or"}}},
+	{MathSymbol::AssignMul, {50, {"*="}}},
+	{MathSymbol::AssignDiv, {50, {"/="}}},
+	{MathSymbol::AssignMod, {50, {"%="}}},
+	{MathSymbol::AssignAdd, {50, {"+="}}},
+	{MathSymbol::AssignSub, {50, {"-="}}},
 };
 static const std::unordered_map<DoubleSymbol, std::string> SIGN_DOUBLE_SYMBOL = {
 	{DoubleSymbol::AddAdd, "++"},

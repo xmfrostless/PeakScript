@@ -8,11 +8,8 @@
 #include <algorithm>
 #include <functional>
 #include <iostream>
-#include <list>
-#include <map>
 #include <array>
 #include <memory>
-#include <set>
 #include <stack>
 #include <string>
 #include <unordered_map>
@@ -23,6 +20,9 @@
 #include <typeindex>
 #include <charconv>
 #include <cmath>
+#include <float.h>
+#include <regex>
+#include <sstream>
 
 namespace peak {
 
